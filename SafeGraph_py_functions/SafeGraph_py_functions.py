@@ -1,6 +1,9 @@
 
-import pandas
+import pandas as pd
 import json
+import os
+import numpy
+import glob
 
 
 ### -------------------------------------Test and Help functions -------------------------------------------------------
@@ -51,27 +54,12 @@ def help():
 
 def vertically_explode_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
                             value_col_name='cbg_visitor_count'):
-    # This function vertically explodes a JSON column in SafeGraph Patterns
-    # The resulting dataframe has one row for every data element in all the JSON of all the original rows
-    # This is a slow step. If you are working with more than 20,000 rows you should explore faster implementations like pyspark, see here: https://docs.safegraph.com/docs/faqs#section-how-do-i-work-with-the-patterns-columns-that-contain-json
-
-    # Inputs
-    #    df -- a pandas.DataFrame -- dataframe with a unique df.index for every row
-    #    json_column -- each element of this column is a stringified json blog. No elements can be NULL. # TODO: convert NA JSON columns to empty `{}` so function can handle them and just pass those rows through
-    #    key_col_name -- arbitrary string, the name of the column in the output which contains the keys of the key:values of the JSON
-    #    value_col_name -- arbitrary string, the name of the column in the output which contains the values of the key:values of the JSON
-    # Outputs
-    #    df -- a pandas.DataFrame with 2 new columns
-    #    1) key_col_name
-    #    2) value_col_name
-
     df = df_.copy()
     if (df.index.unique().shape[0] < df.shape[0]):
         raise ("ERROR -- non-unique index found")
     df[json_column + '_dict'] = [json.loads(cbg_json) for cbg_json in df[json_column]]
     all_sgpid_cbg_data = []  # each cbg data point will be one element in this list
     for index, row in df.iterrows():
-        # extract each key:value inside each visitor_home_cbg dict (2 nested loops)
         this_sgpid_cbg_data = [{'orig_index': index, key_col_name: key, value_col_name: value} for key, value in
                                row[json_column + '_dict'].items()]
         all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
