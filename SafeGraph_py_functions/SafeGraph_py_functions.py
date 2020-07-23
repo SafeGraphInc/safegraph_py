@@ -197,7 +197,7 @@ def read_pattern_single(f_path, use_cols=use_cols_pattern, compression='gzip'):
 
 
 def read_pattern_multi(path_to_pattern, use_cols=use_cols_pattern, compression='gzip'):
-    pattern_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
+    pattern_files = glob.glob(os.path.join(path_to_pattern, "*.csv.gz"))
     print(f"You are about to load in {len(pattern_files)} pattern files")
 
     li = []
