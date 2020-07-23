@@ -161,12 +161,17 @@ def unpack_json_key_value_data(df, json_column='visitor_home_cbgs', key_col_name
 
 # Hard coded variable for columns
 
-use_cols = ["safegraph_place_id", "location_name", "parent_safegraph_place_id", "safegraph_brand_ids", "brands",
+use_cols_core = ["safegraph_place_id", "location_name", "parent_safegraph_place_id", "safegraph_brand_ids", "brands",
             "top_category", "sub_category", 'naics_code', "latitude", "longitude", "street_address", "city", "region",
             "postal_code", "iso_country_code", "phone_number", "open_hours", "category_tags"]
 
+use_cols_pattern = ["safegraph_place_id",	"location_name",	"street_address",	"city",	"region",	"postal_code",	"iso_country_code",
+                    "safegraph_brand_ids",	"brands",	"date_range_start",	"date_range_end",	"raw_visit_counts",	"raw_visitor_counts",
+                    "visits_by_day",	"visits_by_each_hour",	"poi_cbg",	"visitor_home_cbgs",	"visitor_daytime_cbgs",	"visitor_country_of_origin",
+                    "distance_from_home",	"median_dwell",	"bucketed_dwell_times",	"related_same_day_brand",	"related_same_week_brand",	"device_type"]
 
-def read_core_folder(path_to_core, use_cols=use_cols):
+
+def read_core_folder(path_to_core, use_cols=use_cols_core):
     core_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
     print(f"You are about to load in {len(core_files)} core files")
 
@@ -181,17 +186,17 @@ def read_core_folder(path_to_core, use_cols=use_cols):
     return SG_core
 
 
-def read_pattern_demo(f_path, use_cols=use_cols, compression='gzip', nrows=100):
+def read_pattern_demo(f_path, use_cols=use_cols_pattern, compression='gzip', nrows=100):
     df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, nrows=nrows, compression=compression,
                      use_cols=use_cols)
     return df
 
-def read_pattern_single(f_path, use_cols=use_cols, compression='gzip'):
+def read_pattern_single(f_path, use_cols=use_cols_pattern, compression='gzip'):
   df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, usecols=use_cols, compression=compression)
   return df
 
 
-def read_pattern_multi(path_to_pattern, use_cols=use_cols, compression='gzip'):
+def read_pattern_multi(path_to_pattern, use_cols=use_cols_pattern, compression='gzip'):
     pattern_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
     print(f"You are about to load in {len(pattern_files)} pattern files")
 
