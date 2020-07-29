@@ -3,6 +3,7 @@ import json
 import os
 import numpy
 import glob
+from zipfile import ZipFile
 
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
@@ -86,10 +87,10 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             use_cols
             compression
 
-    + merge_pattern_core() - used to combine the core file and the pattern files on the SafeGraph ID
+    + merge_core_pattern() - used to combine the core file and the pattern files on the SafeGraph ID
         **Arguments:
-            patterns_df*
             core_df*
+            patterns_df*
             how
 
   ''')
@@ -97,7 +98,7 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
 ### -------------------------------------- JSON Functions ---------------------------------------------------------------
 
-def unpack_json_separate(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
+def unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
                          value_col_name='cbg_visitor_count'):
     df = df_.copy()
     if (df.index.unique().shape[0] < df.shape[0]):
@@ -113,13 +114,13 @@ def unpack_json_separate(df_, json_column='visitor_home_cbgs', key_col_name='vis
     return output
 
 
-def unpack_json_together(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
+def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
                          value_col_name='cbg_visitor_count', keep_index=False):
     if (keep_index):
         df['index_original'] = df.index
     df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
     df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
-    df_exp = unpack_json_separate(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
+    df_exp = unpack_json(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
@@ -143,6 +144,21 @@ def read_core_folder(path_to_core, use_cols=None):
     SG_core = pd.concat(li, axis=0)
     return SG_core
 
+### added a new core read that takes the information straight from the zipped file (like you get it from the catelog)
+
+def read_core_folder_zip(path_to_core, use_cols=None):
+    zip_file = ZipFile(path_to_core)
+
+    li = []
+
+    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), usecols=use_cols, compression='gzip',
+                         dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
+           for text_file in zip_file.infolist()
+           if text_file.filename.endswith('.csv.gz')}
+
+    SG_core = pd.concat(dfs, axis=0, ignore_index=True)
+
+    return SG_core
 
 def read_pattern_demo(f_path, use_cols=None, compression='gzip', nrows=100):
     df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, nrows=nrows,
@@ -172,6 +188,6 @@ def read_pattern_multi(path_to_pattern, use_cols=None, compression='gzip'):
     return SG_pattern
 
 
-def merge_pattern_core(patterns_df, core_df, how='left'):
-    merged_df = pd.merge(patterns_df, core_df, on='safegraph_place_id', how=how)
+def merge_core_pattern(core_df, patterns_df, how='inner'):
+    merged_df = pd.merge(core_df, patterns_df, on='safegraph_place_id', how=how)
     return merged_df
