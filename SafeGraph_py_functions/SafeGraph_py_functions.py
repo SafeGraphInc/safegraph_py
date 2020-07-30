@@ -3,7 +3,6 @@ import json
 import os
 import numpy
 import glob
-from zipfile import ZipFile
 import zipfile as zp
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
@@ -61,8 +60,18 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             value_col
             keep_index (&)
 
-    + explode_json_array() - a function to explode JSON array within pandas vertically and add it to the current DF
-    
+    + explode_json_array() - This function vertically explodes an array column in SafeGraph data and creates a second new column indicating the index value from the array
+        **Arguments:
+            df*
+            array_column
+            new_col
+            place_key
+            file_key
+            array_sequence
+            keep_index (&)
+            verbose (&)
+            zero_index (&)
+            
 -----------------[CORE, GEO, and PATTERNS section]----------------------
 
     + read_core_folder() - a function that concats the core files together into 1 dataframe
@@ -124,7 +133,6 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='vis
     return df
 
 def explode_json_array(df_, array_column = 'visits_by_day', new_col='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False):
-    # This function vertically explodes an array column in SafeGraph data and creates a second new column indicating the index value from the array
     df = df_.copy()
     if(verbose): print("Running explode_json_array()")
     if(keep_index):
@@ -148,14 +156,14 @@ def explode_json_array(df_, array_column = 'visits_by_day', new_col='day_visit_c
 ### ---------------------------------------CORE, GEO, AND PATTERNS SECTION -----------------------------------------------
 
 
-def read_core_folder(path_to_core, *args, **kwargs):
+def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
     core_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
     print(f"You are about to load in {len(core_files)} core files")
 
     li = []
     for core in core_files:
         print(core)
-        df = pd.read_csv(core, *args, **kwargs, compression='gzip',
+        df = pd.read_csv(core, *args, **kwargs, compression=compression,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
         li.append(df)
 
@@ -164,12 +172,12 @@ def read_core_folder(path_to_core, *args, **kwargs):
 
 ### added a new core read that takes the information straight from the zipped file (like you get it from the catelog)
 
-def read_core_folder_zip(path_to_core, *args, **kwargs):
+def read_core_folder_zip(path_to_core, compression='gzip',*args, **kwargs):
     zip_file = ZipFile(path_to_core)
 
     li = []
 
-    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), *args, **kwargs, compression='gzip',
+    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), compression=compression, *args, **kwargs,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
            for text_file in zip_file.infolist()
            if text_file.filename.endswith('.csv.gz')}
@@ -178,27 +186,26 @@ def read_core_folder_zip(path_to_core, *args, **kwargs):
 
     return SG_core
 
-def read_geo_zip(path_to_zip, *args, **kwargs):
+def read_geo_zip(path_to_zip, compression='gzip', *args, **kwargs):
   zf = zp.ZipFile(path_to_zip)
-  result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression='gzip', *args, **kwargs)
+  result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, *args, **kwargs)
 
   return result
 
 
-def read_pattern_single(f_path, *args, **kwargs):
-    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs,
-                     compression='gzip')
+def read_pattern_single(f_path, compression='gzip', *args, **kwargs):
+    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, compression=compression, *args, **kwargs)
     return df
 
 
-def read_pattern_multi(path_to_pattern, use_cols=None, *args, **kwargs):
+def read_pattern_multi(path_to_pattern, compression='gzip', *args, **kwargs):
     pattern_files = glob.glob(os.path.join(path_to_pattern, "*.csv.gz"))
     print(f"You are about to load in {len(pattern_files)} pattern files")
 
     li = []
     for pattern in pattern_files:
         print(pattern)
-        df = pd.read_csv(pattern, *args, **kwargs, compression='gzip',
+        df = pd.read_csv(pattern, compression=compression, *args, **kwargs,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
         li.append(df)
 
