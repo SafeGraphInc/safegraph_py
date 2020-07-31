@@ -3,7 +3,7 @@ import json
 import os
 import numpy
 import glob
-import zipfile as zp
+from zipfile import ZipFile
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
@@ -36,6 +36,7 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
         Key:
             *    -    Required Argument
             &    -    Boolean value
+            $    -    Pandas *args and **kwargs are activated
 
 
 
@@ -45,26 +46,26 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
   ----------------------[JSON Section]----------------------
 
-    + unpack_json_separate() - a function to explode JSON objects within pandas vertically into a new DF
+    + unpack_json() - a function to explode JSON objects within pandas vertically into a new DF
         **Arguments: 
             df*
             json_column 
-            key_column_name 
-            value_column_name 
+            key_col_name 
+            value_col_name 
 
-    + unpack_json_together() - a function to explode JSON objects within pandas vertically and add it to the current DF 
+    + unpack_json_and_merge() - a function to explode JSON objects within pandas vertically and add it to the current DF 
         **Arguments:
             df*
             json_column
-            key_col
-            value_col
+            key_col_name
+            value_col_name
             keep_index (&)
 
     + explode_json_array() - This function vertically explodes an array column in SafeGraph data and creates a second new column indicating the index value from the array
         **Arguments:
             df*
             array_column
-            new_col
+            value_col_name
             place_key
             file_key
             array_sequence
@@ -77,29 +78,39 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
     + read_core_folder() - a function that concats the core files together into 1 dataframe
         **Arguments:
             path_to_core*
-            use_cols
+            compression
+            $
 
     + read_core_folder_zip() - used to read in the Core data from the zipped core file
+        **Arguments:
+            path_to_core*
+            compression
+            $
 
     + read_geo_zip() - used to read in the Core Geo data from a zipped file
+        **Arguments:
+            path_to_geo*
+            compression
+            $
 
     + read_pattern_single() - used to read in SafeGraph data pre June 15th
         **Arguments:
             f_path*
-            use_cols
-            compression       
+            compression 
+            $      
 
     + read_pattern_multi() - used to read in SafeGraph pattern data that is broken into multiple files
         **Arguments:
             path_to_pattern*
-            use_cols
             compression
+            $
 
     + merge_core_pattern() - used to combine the core file and the pattern files on the SafeGraph ID
         **Arguments:
             core_df*
             patterns_df*
             how
+            $
 
   ''')
 
@@ -132,7 +143,7 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='vis
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
-def explode_json_array(df_, array_column = 'visits_by_day', new_col='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False):
+def explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False):
     df = df_.copy()
     if(verbose): print("Running explode_json_array()")
     if(keep_index):
@@ -145,8 +156,8 @@ def explode_json_array(df_, array_column = 'visits_by_day', new_col='day_visit_c
     if(zero_index):
       day_visits_exp[array_sequence] = day_visits_exp[array_sequence] -1
     day_visits_exp.drop(['dummy_key'], axis=1, inplace=True)
-    day_visits_exp.rename(columns={array_column+'_json': new_col}, inplace=True)
-    day_visits_exp[new_col] = day_visits_exp[new_col].astype('int64')
+    day_visits_exp.rename(columns={array_column+'_json': value_col_name}, inplace=True)
+    day_visits_exp[value_col_name] = day_visits_exp[value_col_name].astype('int64')
     df.drop([array_column+'_json'], axis=1, inplace=True)
     df = pd.merge(df, day_visits_exp, on=[place_key,file_key])
     return df
@@ -172,7 +183,7 @@ def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
 
 ### added a new core read that takes the information straight from the zipped file (like you get it from the catelog)
 
-def read_core_folder_zip(path_to_core, compression='gzip',*args, **kwargs):
+def read_core_folder_zip(path_to_core, compression='gzip', *args, **kwargs):
     zip_file = ZipFile(path_to_core)
 
     li = []
@@ -186,8 +197,8 @@ def read_core_folder_zip(path_to_core, compression='gzip',*args, **kwargs):
 
     return SG_core
 
-def read_geo_zip(path_to_zip, compression='gzip', *args, **kwargs):
-  zf = zp.ZipFile(path_to_zip)
+def read_geo_zip(path_to_geo, compression='gzip', *args, **kwargs):
+  zf = ZipFile(path_to_geo)
   result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, *args, **kwargs)
 
   return result
@@ -213,6 +224,6 @@ def read_pattern_multi(path_to_pattern, compression='gzip', *args, **kwargs):
     return SG_pattern
 
 
-def merge_core_pattern(core_df, patterns_df, *args, **kwargs):
-    merged_df = pd.merge(core_df, patterns_df, on='safegraph_place_id', how='inner', *args, **kwargs)
+def merge_core_pattern(core_df, patterns_df, how='inner', *args, **kwargs):
+    merged_df = pd.merge(core_df, patterns_df, on='safegraph_place_id', how=how, *args, **kwargs)
     return merged_df
