@@ -3,7 +3,7 @@ import json
 import os
 import numpy
 import glob
-
+import zipfile as zp
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
@@ -60,19 +60,28 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             value_col
             keep_index (&)
 
------------------[CORE and PATTERNS section]----------------------
+    + explode_json_array() - This function vertically explodes an array column in SafeGraph data and creates a second new column indicating the index value from the array
+        **Arguments:
+            df*
+            array_column
+            new_col
+            place_key
+            file_key
+            array_sequence
+            keep_index (&)
+            verbose (&)
+            zero_index (&)
+            
+-----------------[CORE, GEO, and PATTERNS section]----------------------
 
     + read_core_folder() - a function that concats the core files together into 1 dataframe
         **Arguments:
             path_to_core*
             use_cols
 
-    + read_pattern_demo() - gives a quick read of a patterns file to see how the data looks
-        **Arguments:
-            f_path*
-            use_cols
-            compression
-            nrows
+    + read_core_folder_zip() - used to read in the Core data from the zipped core file
+
+    + read_geo_zip() - used to read in the Core Geo data from a zipped file
 
     + read_pattern_single() - used to read in SafeGraph data pre June 15th
         **Arguments:
@@ -86,10 +95,10 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             use_cols
             compression
 
-    + merge_pattern_core() - used to combine the core file and the pattern files on the SafeGraph ID
+    + merge_core_pattern() - used to combine the core file and the pattern files on the SafeGraph ID
         **Arguments:
-            patterns_df*
             core_df*
+            patterns_df*
             how
 
   ''')
@@ -97,7 +106,7 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
 ### -------------------------------------- JSON Functions ---------------------------------------------------------------
 
-def unpack_json_separate(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
+def unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
                          value_col_name='cbg_visitor_count'):
     df = df_.copy()
     if (df.index.unique().shape[0] < df.shape[0]):
@@ -113,58 +122,90 @@ def unpack_json_separate(df_, json_column='visitor_home_cbgs', key_col_name='vis
     return output
 
 
-def unpack_json_together(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
+def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
                          value_col_name='cbg_visitor_count', keep_index=False):
     if (keep_index):
         df['index_original'] = df.index
     df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
     df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
-    df_exp = unpack_json_separate(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
+    df_exp = unpack_json(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
+def explode_json_array(df_, array_column = 'visits_by_day', new_col='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False):
+    df = df_.copy()
+    if(verbose): print("Running explode_json_array()")
+    if(keep_index):
+        df['index_original'] = df.index
+    df.reset_index(drop=True, inplace=True) # THIS IS IMPORTANT; explode will not work correctly if index is not unique
+    df[array_column+'_json'] = [json.loads(myjson) for myjson in df[array_column]]
+    day_visits_exp = df[[place_key, file_key, array_column+'_json']].explode(array_column+'_json')
+    day_visits_exp['dummy_key'] = day_visits_exp.index
+    day_visits_exp[array_sequence] = day_visits_exp.groupby([place_key, file_key])['dummy_key'].rank(method='first', ascending=True).astype('int64')
+    if(zero_index):
+      day_visits_exp[array_sequence] = day_visits_exp[array_sequence] -1
+    day_visits_exp.drop(['dummy_key'], axis=1, inplace=True)
+    day_visits_exp.rename(columns={array_column+'_json': new_col}, inplace=True)
+    day_visits_exp[new_col] = day_visits_exp[new_col].astype('int64')
+    df.drop([array_column+'_json'], axis=1, inplace=True)
+    df = pd.merge(df, day_visits_exp, on=[place_key,file_key])
+    return df
 
 ### ------------------------------------------ END JSON SECTION--------------------------------------------------------
 
-### ---------------------------------------CORE AND PATTERNS SECTION -----------------------------------------------
+### ---------------------------------------CORE, GEO, AND PATTERNS SECTION -----------------------------------------------
 
 
-def read_core_folder(path_to_core, use_cols=None):
+def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
     core_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
     print(f"You are about to load in {len(core_files)} core files")
 
     li = []
     for core in core_files:
         print(core)
-        df = pd.read_csv(core, usecols=use_cols, compression='gzip',
+        df = pd.read_csv(core, compression=compression, *args, **kwargs,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
         li.append(df)
 
     SG_core = pd.concat(li, axis=0)
     return SG_core
 
+### added a new core read that takes the information straight from the zipped file (like you get it from the catelog)
 
-def read_pattern_demo(f_path, use_cols=None, compression='gzip', nrows=100):
-    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, nrows=nrows,
-                     compression=compression,
-                     usecols=use_cols)
+def read_core_folder_zip(path_to_core, compression='gzip',*args, **kwargs):
+    zip_file = ZipFile(path_to_core)
+
+    li = []
+
+    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), compression=compression, *args, **kwargs,
+                         dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
+           for text_file in zip_file.infolist()
+           if text_file.filename.endswith('.csv.gz')}
+
+    SG_core = pd.concat(dfs, axis=0, ignore_index=True)
+
+    return SG_core
+
+def read_geo_zip(path_to_zip, compression='gzip', *args, **kwargs):
+  zf = zp.ZipFile(path_to_zip)
+  result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, *args, **kwargs)
+
+  return result
+
+
+def read_pattern_single(f_path, compression='gzip', *args, **kwargs):
+    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, compression=compression, *args, **kwargs)
     return df
 
 
-def read_pattern_single(f_path, use_cols=None, compression='gzip'):
-    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, usecols=use_cols,
-                     compression=compression)
-    return df
-
-
-def read_pattern_multi(path_to_pattern, use_cols=None, compression='gzip'):
+def read_pattern_multi(path_to_pattern, compression='gzip', *args, **kwargs):
     pattern_files = glob.glob(os.path.join(path_to_pattern, "*.csv.gz"))
     print(f"You are about to load in {len(pattern_files)} pattern files")
 
     li = []
     for pattern in pattern_files:
         print(pattern)
-        df = pd.read_csv(pattern, usecols=use_cols, compression=compression,
+        df = pd.read_csv(pattern, compression=compression, *args, **kwargs,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
         li.append(df)
 
@@ -172,6 +213,6 @@ def read_pattern_multi(path_to_pattern, use_cols=None, compression='gzip'):
     return SG_pattern
 
 
-def merge_pattern_core(patterns_df, core_df, how='left'):
-    merged_df = pd.merge(patterns_df, core_df, on='safegraph_place_id', how=how)
+def merge_core_pattern(core_df, patterns_df, *args, **kwargs):
+    merged_df = pd.merge(core_df, patterns_df, on='safegraph_place_id', how='inner', *args, **kwargs)
     return merged_df
