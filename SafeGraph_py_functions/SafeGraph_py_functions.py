@@ -163,7 +163,7 @@ def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
     li = []
     for core in core_files:
         print(core)
-        df = pd.read_csv(core, *args, **kwargs, compression=compression,
+        df = pd.read_csv(core, compression=compression, *args, **kwargs,
                          dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
         li.append(df)
 
