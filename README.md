@@ -1,10 +1,10 @@
-# Safegraph_py
+# `safegraph_py`
 
-Safegraph_py is a Python library designed to make your experiece with SafeGraph data as easy as possible.
+`safegraph_py` is a Python library designed to make your experiece with SafeGraph data as easy as possible.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install safegraph_py.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install `safegraph_py`.
 
 ```bash
 pip install -q --upgrade git+https://github.com/SafeGraphInc/safegraph_py
@@ -69,7 +69,7 @@ The read_pattern_multi function is design to read in multiple pattern files and 
 The merge_core_pattern function is designed to take a patterns DF and cross examine it with a core DF. The resulting pandas DF will be a DF with all of the values from your patterns DF as well as the matching values from your core DF (merge done on 'safegraph_place_id'). All Pandas arguments and keywork arguments can be passed into this function.
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.
 
 ## License
 [SafeGraph](https://github.com/SafeGraphInc/safegraph_py/blob/master/LICENSE)
