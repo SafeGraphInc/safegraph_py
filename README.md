@@ -71,5 +71,9 @@ The merge_core_pattern function is designed to take a patterns DF and cross exam
 ## Contributing
 Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.
 
+## You may also be interested in: 
+* The [awesome-safegraph-datascience](https://github.com/SafeGraphInc/awesome-safegraph-datascience) repo
+* SafeGraph's [data science resources page](https://docs.safegraph.com/docs/data-science-resources)
+
 ## License
 [SafeGraph](https://github.com/SafeGraphInc/safegraph_py/blob/master/LICENSE)
