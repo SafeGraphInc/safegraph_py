@@ -7,8 +7,8 @@ from zipfile import ZipFile
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
-def Test_me():
-    print("hello world")
+def test_me():
+    print("Hello World")
 
 
 def help():
@@ -42,7 +42,7 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
   Available Functions: 
 
-    + Test_me() - A function to test the Python Libray
+    + test_me() - A function to test the Python Libray
 
   ----------------------[JSON Section]----------------------
 

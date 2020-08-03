@@ -15,7 +15,7 @@ pip install -q --upgrade git+https://github.com/SafeGraphInc/safegraph_py
 ```python
 from safegraph_py_functions import safegraph_py_functions as sgpy
 
-sgpy.Test_me() # returns 'Hello World' to ensure you have downloaded the library
+sgpy.test_me() # returns 'Hello World' to ensure you have downloaded the library
 sgpy.help() # returns a list of all active functions and their arguments in the safegraph_py library
 sgpy.read_pattern_single(f_path) # returns a Pandas DF from a single patterns file
 # etc. . . 
