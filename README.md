@@ -2,6 +2,8 @@
 
 `safegraph_py` is a Python library designed to make your experiece with SafeGraph data as easy as possible.
 
+These functions are [demonstrated on SafeGraph data in this Colab Notebook](https://colab.research.google.com/drive/1V7hnyYuY_dUXQEPkCMZkgMuBFQV4iA_4?usp=sharing). 
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install `safegraph_py`.
