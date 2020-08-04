@@ -70,6 +70,11 @@ The read_pattern_multi function is design to read in multiple pattern files and 
 
 The merge_core_pattern function is designed to take a patterns DF and cross examine it with a core DF. The resulting pandas DF will be a DF with all of the values from your patterns DF as well as the matching values from your core DF (merge done on 'safegraph_place_id'). All Pandas arguments and keyword arguments can be passed into this function.
 
+#### merge_socialDist_by_dates(path_to_social_dist, start_date, end_date, args, kwargs)
+
+The merge_socialDist_by_dates function is designed to merge the social distancing data from a given start_date date to a given end_date. The resulting pandas DF will be a DF of all social distancing data from the start_date to the end_date. All Pandas arguments and keywork arguments can be passed into this function.
+* start_date and end_date are strings formated as: "year-month-day"
+
 ## Contributing
 Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.
 
