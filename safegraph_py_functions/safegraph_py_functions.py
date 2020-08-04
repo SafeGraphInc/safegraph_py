@@ -272,7 +272,6 @@ def merge_socialDist_by_dates(path_to_social_dist, start_date, end_date, *args, 
     t = []
     for file in files:
         temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
-        temp_df['origin_census_block_group']=temp_df['origin_census_block_group'].str.zfill(12) # to be safe
         t.append(temp_df) 
     return pd.concat(t, axis=0,ignore_index=True)
 
