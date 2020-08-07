@@ -185,8 +185,6 @@ def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
 def read_core_folder_zip(path_to_core, compression='gzip', *args, **kwargs):
     zip_file = ZipFile(path_to_core)
 
-    li = []
-
     dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), compression=compression, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs)
            for text_file in zip_file.infolist()
            if text_file.filename.endswith('.csv.gz')}
