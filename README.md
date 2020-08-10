@@ -48,27 +48,32 @@ The explode_json_array function is similar to the unpack_json functions, except 
 
 #### read_core_folder(path_to_core, compression='gzip', args, kwargs)
 
-The read_core_folder function is designed to take an unpacked core file and read in the 5 core values - thus creating a complete Core Files DF with specified datatypes. All Pandas arguments and keyword arguments can be passed into this function.
+The read_core_folder function is designed to take an unpacked core file and read in the 5 core values - thus creating a complete Core Files DF with specified datatypes. All Pandas arguments and keywords arguments can be passed into this function.
 
 #### read_core_folder_zip(path_to_core, compression='gzip', args, kwargs)
 
-The read_core_folder_zip is designed to take the raw zipped file you recieve directly from SafeGraph and create a complete Core Files DF with specified datatypes. All Pandas arguments and keyword arguments can be passed into this function.
+The read_core_folder_zip is designed to take the raw zipped file you recieve directly from SafeGraph and create a complete Core Files DF with specified datatypes. All Pandas arguments and keywords arguments can be passed into this function.
 
 #### read_geo_zip(path_to_geo, compression='gzip', args, kwargs)
 
-The read_geo_zip is designed to take the raw zipped geo file you recieve directly from the [SafeGraph shop](https://shop.safegraph.com/) and create a pandas DF. All Pandas arguments and keyword arguments can be passed into this function.
+The read_geo_zip is designed to take the raw zipped geo file you recieve directly from the [SafeGraph shop](https://shop.safegraph.com/) and create a pandas DF. All Pandas arguments and keywords arguments can be passed into this function.
 
 #### read_pattern_single(f_path, compression='gzip', args, kwargs)
 
-The read_pattern_single function is designed to allow the user to read in a singular patterns file of any type (weekly or monthly) and create a pandas DF with specified datatypes. All Pandas arguments and keyword arguments can be passed into this function.
+The read_pattern_single function is designed to allow the user to read in a singular patterns file of any type (weekly or monthly) and create a pandas DF with specified datatypes. All Pandas arguments and keywords arguments can be passed into this function.
 
 #### read_pattern_multi(path_to_pattern, compression='gzip', args, kwargs)
 
-The read_pattern_multi function is design to read in multiple pattern files and combine them into 1 DF with specified datatypes (Warning: if columns are not specified, you can run out of memory very quickly and have an error). All Pandas arguments and keyword arguments can be passed into this function.
+The read_pattern_multi function is designed to read in multiple pattern files and combine them into 1 DF with specified datatypes (Warning: if columns are not specified, you can run out of memory very quickly and have an error). All Pandas arguments and keywords arguments can be passed into this function.
 
 #### merge_core_pattern(core_df, patterns_df, how='inner', args, kwargs)
 
-The merge_core_pattern function is designed to take a patterns DF and cross examine it with a core DF. The resulting pandas DF will be a DF with all of the values from your patterns DF as well as the matching values from your core DF (merge done on 'safegraph_place_id'). All Pandas arguments and keyword arguments can be passed into this function.
+The merge_core_pattern function is designed to take a patterns DF and cross examine it with a core DF. The resulting pandas DF will be a DF with all of the values from your patterns DF as well as the matching values from your core DF (merge done on 'safegraph_place_id'). All Pandas arguments and keywords arguments can be passed into this function.
+
+#### merge_socialDist_by_dates(path_to_social_dist, start_date, end_date, args, kwargs)
+
+The merge_socialDist_by_dates function is designed to merge the social distancing data from a given start_date to a given end_date. The resulting pandas DF will be a DF of all social distancing data from the start_date to the end_date. All Pandas arguments and keywords arguments can be passed into this function.
+* start_date and end_date are strings formated as: "year-month-day"
 
 ## Contributing
 Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.

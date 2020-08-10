@@ -111,6 +111,16 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             patterns_df*
             how
             $
+            
+    -----------------[Social Distancing section]----------------------
+
+    + merge_socialDist_by_dates() - a function that concats the multiple different dates of social distancing data together into 1 dataframe
+        **Arguments:
+            path_to_social_dist*
+            start_date*  (date as string "year-month-day")
+            end_date*    (date as string "year-month-day")
+            $
+    
 
   ''')
 
@@ -235,3 +245,31 @@ def read_pattern_multi(path_to_pattern, compression='gzip', *args, **kwargs):
 def merge_core_pattern(core_df, patterns_df, how='inner', *args, **kwargs):
     merged_df = pd.merge(core_df, patterns_df, on='safegraph_place_id', how=how, *args, **kwargs)
     return merged_df
+
+
+### --------------------------------------- END CORE, GEO, AND PATTERNS SECTION -----------------------------------------------
+
+### --------------------------------------- SOCIAL DISTANCING SECTION -----------------------------------------------
+
+## start_date and end_date = string formated as "year-month-day" 
+    ## ex: start_date = "2020-06-01", end_date = "2020-06-07"
+
+def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **kwargs):
+    path = os.path.join(path_to_social_dist,start_date[:4])
+    if(start_date[5:7] == end_date[5:7]): # same month
+        path = os.path.join(path,end_date[5:7])
+        files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:int(end_date[-2:])]
+     else:
+        path2 = os.path.join(path, end_date[5:7]) # not same month, so different folder
+        path = os.path.join(path, start_date[5:7])
+        last_day = int(sorted(os.listdir(path)[-1])) # get last day of month
+        files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:last_day]
+        files.extend([file.path for day in os.scandir(path2) for file in os.scandir(day.path)][:int(end_date[-2:])])
+    li = []
+    for file in files:
+        temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
+        li.append(temp_df)
+    return pd.concat(li, axis=0,ignore_index=True)
+
+
+### --------------------------------------- END SOCIAL DISTANCING SECTION -----------------------------------------------
