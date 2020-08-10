@@ -254,8 +254,8 @@ def merge_core_pattern(core_df, patterns_df, how='inner', *args, **kwargs):
 
 ### --------------------------------------- SOCIAL DISTANCING SECTION -----------------------------------------------
 
-## start_range and end_range = string formated as "year-month-day" 
-    ## ex: start_range = "2020-06-01", end_range = "2020-06-07"
+## start_date and end_date = string formated as "year-month-day" 
+    ## ex: start_date = "2020-06-01", end_date = "2020-06-07"
 
 def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **kwargs):
     path = os.path.join(path_to_social_dist,start_date[:4])
