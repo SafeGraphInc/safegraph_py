@@ -4,7 +4,6 @@ import os
 import numpy
 import glob
 from zipfile import ZipFile
-from pathlib import Path
 from calendar import monthrange
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
@@ -258,22 +257,22 @@ def merge_core_pattern(core_df, patterns_df, how='inner', *args, **kwargs):
 ## start_range and end_range = string formated as "year-month-day" 
     ## ex: start_range = "2020-06-01", end_range = "2020-06-07"
 
-def merge_socialDist_by_dates(path_to_social_dist, start_date, end_date, *args, **kwargs):
-    path = Path(path_to_social_dist,start_date[:4]) # go to year 
+def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **kwargs):
+    path = os.path.join(path_to_social_dist,start_date[:4])
     if(start_date[5:7] == end_date[5:7]): # same month
-        path = Path(path,end_date[5:7])
-        files = [file for x in path.iterdir() for file in x.iterdir()][int(start_date[-2:])-1:int(end_date[-2:])]
+        path = os.path.join(path,end_date[5:7])
+        files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:int(end_date[-2:])]
     else:
         last_day = monthrange(int(start_date[:4]), int(start_date[5:7]))[1] # get last day of month
-        path2 = Path(path, end_date[5:7]) # not same month, so different folder
-        path = Path(path, start_date[5:7])
-        files = [file for x in path.iterdir() for file in x.iterdir()][int(start_date[-2:])-1:last_day]
-        files.extend([file for x in path2.iterdir() for file in x.iterdir()][:int(end_date[-2:])])
-    t = []
+        path2 = os.path.join(path, end_date[5:7]) # not same month, so different folder
+        path = os.path.join(path, start_date[5:7])
+        files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:last_day]
+        files.extend([file.path for day in os.scandir(path) for file in os.scandir(day.path)][:int(end_date[-2:])])
+    li = []
     for file in files:
         temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
-        t.append(temp_df) 
-    return pd.concat(t, axis=0,ignore_index=True)
+        li.append(temp_df)
+    return pd.concat(li, axis=0,ignore_index=True)
 
 
 ### --------------------------------------- END SOCIAL DISTANCING SECTION -----------------------------------------------
