@@ -164,7 +164,7 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name=None
 
 def explode_json_array(df_, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False):
     if (array_sequence is None):
-      array_sequence = array_column + 'sequence'
+      array_sequence = array_column + '_sequence'
     if (value_col_name is None):
       value_col_name = array_column + '_value'
     df = df_.copy()
