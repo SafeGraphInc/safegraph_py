@@ -117,8 +117,12 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
 ### -------------------------------------- JSON Functions ---------------------------------------------------------------
 
-def unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
-                         value_col_name='cbg_visitor_count'):
+def unpack_json(df_, json_column='visitor_home_cbgs', key_col_name=None,
+                         value_col_name=None):
+    if (key_col_name is None):
+      key_col_name = json_column + '_key'
+    if (value_col_name is None):
+      value_col_name = json_column + '_value'
     df = df_.copy()
     if (df.index.unique().shape[0] < df.shape[0]):
         raise ("ERROR -- non-unique index found")
@@ -133,8 +137,12 @@ def unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home
     return output
 
 
-def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg',
-                         value_col_name='cbg_visitor_count', keep_index=False):
+def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name=None,
+                         value_col_name=None, keep_index=False):
+    if (key_col_name is None):
+      key_col_name = json_column + '_key'
+    if (value_col_name is None):
+      value_col_name = json_column + '_value'
     if (keep_index):
         df['index_original'] = df.index
     df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
@@ -143,7 +151,11 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='vis
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
-def explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False):
+def explode_json_array(df_, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False):
+    if (array_sequence is None):
+      array_sequence = array_column + '_sequence'
+    if (value_col_name is None):
+      value_col_name = array_column + '_value'
     df = df_.copy()
     if(verbose): print("Running explode_json_array()")
     if(keep_index):
