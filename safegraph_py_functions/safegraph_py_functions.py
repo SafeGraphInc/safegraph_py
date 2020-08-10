@@ -4,7 +4,6 @@ import os
 import numpy
 import glob
 from zipfile import ZipFile
-from calendar import monthrange
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
@@ -262,12 +261,12 @@ def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **
     if(start_date[5:7] == end_date[5:7]): # same month
         path = os.path.join(path,end_date[5:7])
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:int(end_date[-2:])]
-    else:
-        last_day = monthrange(int(start_date[:4]), int(start_date[5:7]))[1] # get last day of month
+     else:
         path2 = os.path.join(path, end_date[5:7]) # not same month, so different folder
         path = os.path.join(path, start_date[5:7])
+        last_day = int(os.listdir(path)[-1]) # get last day of month
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:last_day]
-        files.extend([file.path for day in os.scandir(path) for file in os.scandir(day.path)][:int(end_date[-2:])])
+        files.extend([file.path for day in os.scandir(path2) for file in os.scandir(day.path)][:int(end_date[-2:])])
     li = []
     for file in files:
         temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
