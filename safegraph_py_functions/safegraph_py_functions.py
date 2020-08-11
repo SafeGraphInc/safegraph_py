@@ -259,10 +259,10 @@ def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **
     if(start_date[5:7] == end_date[5:7]): # same month
         path = os.path.join(path,end_date[5:7])
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:int(end_date[-2:])]
-     else:
+    else:
         path2 = os.path.join(path, end_date[5:7]) # not same month, so different folder
         path = os.path.join(path, start_date[5:7])
-        last_day = int(sorted(os.listdir(path)[-1])) # get last day of month
+        last_day = int(sorted(os.listdir(path))[-1]) # last day of month    
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:last_day]
         files.extend([file.path for day in os.scandir(path2) for file in os.scandir(day.path)][:int(end_date[-2:])])
     li = []
