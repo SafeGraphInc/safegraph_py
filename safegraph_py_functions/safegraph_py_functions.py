@@ -4,6 +4,8 @@ import os
 import numpy
 import glob
 from zipfile import ZipFile
+from functools import partial
+from multiprocessing import Pool
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
@@ -72,7 +74,15 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             keep_index (&)
             verbose (&)
             zero_index (&)
-            
+
+----------------------[JSON Fast Section]----------------------
+
+    + unpack_json_fast() - Multi-threaded version of unpack_json(). Reference unpack_json() for details and arguments.
+    
+    + unpack_json_and_merge_fast() - Multi-threaded version of unpack_json_and_merge(). Reference unpack_json_and_merge() for details and arguments.
+    
+    + explode_json_array_fast() - Multi-threaded version of explode_json_array(). Reference explode_json_array() for details and arguments.
+    
 -----------------[CORE, GEO, and PATTERNS section]----------------------
 
     + read_core_folder() - a function that concats the core files together into 1 dataframe
@@ -185,6 +195,93 @@ def explode_json_array(df_, array_column = 'visits_by_day', value_col_name=None,
     return df
 
 ### ------------------------------------------ END JSON SECTION--------------------------------------------------------
+
+### ------------------------------------------ JSON FAST SECTION--------------------------------------------------------
+def process_unpack_json(df, json_column, index_name, key_col_name, value_col_name):
+    df[json_column + '_dict'] = df[json_column].apply(lambda x: json.loads(x) if type(x) == str else x) # json.loads breaks if the column is empty, so this function is a work around
+    all_sgpid_cbg_data = []  # each cbg data point will be one element in this list
+    if index_name == None:
+      for index, row in df.iterrows():
+          this_sgpid_cbg_data = [{'orig_index': index, key_col_name: key, value_col_name: value} for key, value in
+                                row[json_column + '_dict'].items()]
+          all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
+    else:
+      for index, row in df.iterrows():
+        temp = row[index_name]
+        this_sgpid_cbg_data = [{'orig_index': index, index_name:temp, key_col_name: key, value_col_name: value} for key, value in
+                               row[json_column + '_dict'].items()]
+        all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
+    
+    del df # free memory 
+    all_sgpid_cbg_data = pd.DataFrame(all_sgpid_cbg_data)
+    all_sgpid_cbg_data.set_index('orig_index', inplace=True)
+    return all_sgpid_cbg_data
+
+# index_name if you want your index (such as CBG) to be it's own column, then provide this 
+def unpack_json_fast(df, json_column = 'visitor_home_cbgs', index_name = None, key_col_name = None, value_col_name = None, chunk_n = 1000):
+    # figure out column names, defaulting to 'column name' + _attribute
+    if key_col_name == None:
+      key_col_name = json_column + '_key'
+    if value_col_name == None:
+      value_col_name = json_column + '_value'
+    if (df.index.unique().shape[0] < df.shape[0]):
+      raise ("ERROR -- non-unique index found")
+    
+    chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)] # splitting helps with memory, but it also has an impact on run time. 
+    del df # free memory (Dont think we can avoid the DF being loaded in twice for a moment)
+
+    function = partial(process_unpack_json, json_column=json_column, index_name= index_name, key_col_name= key_col_name, value_col_name= value_col_name)
+    with Pool() as pool:
+        results = pool.map(function,chunks_list)
+    return pd.concat(results)
+
+def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name=None,
+                         value_col_name=None, keep_index=False):
+    if (key_col_name is None):
+      key_col_name = json_column + '_key'
+    if (value_col_name is None):
+      value_col_name = json_column + '_value'
+    if (keep_index):
+        df['index_original'] = df.index
+    # we can handle NA jsons now, so lets just keep them 
+    #df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
+    df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
+    df_exp = unpack_json_fast(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
+    df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
+    return df
+
+def process_explode_json_array(df, array_column, value_col_name, place_key, file_key, array_sequence, zero_index):
+    df[array_column + '_json'] = df[array_column].apply(lambda x: json.loads(x) if type(x) == str else x) # json.loads breaks if the column is empty, so this function is a work around
+    day_visits_exp = df[[place_key, file_key, array_column+'_json']].explode(array_column+'_json')
+    day_visits_exp['dummy_key'] = day_visits_exp.index
+    day_visits_exp[array_sequence] = day_visits_exp.groupby([place_key, file_key])['dummy_key'].rank(method='first', ascending=True).astype('int64')
+    if(zero_index):
+      day_visits_exp[array_sequence] = day_visits_exp[array_sequence] -1
+    day_visits_exp.drop(['dummy_key'], axis=1, inplace=True)
+    day_visits_exp.rename(columns={array_column+'_json': value_col_name}, inplace=True)
+    day_visits_exp[value_col_name] = day_visits_exp[value_col_name].astype('int64')
+    df.drop([array_column+'_json'], axis=1, inplace=True)
+    return pd.merge(df, day_visits_exp, on=[place_key,file_key])
+
+def explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
+    if (array_sequence is None):
+      array_sequence = array_column + '_sequence'
+    if (value_col_name is None):
+      value_col_name = array_column + '_value'
+    if(verbose): print("Running explode_json_array()")
+    if(keep_index):
+        df['index_original'] = df.index
+    df.reset_index(drop=True, inplace=True) # THIS IS IMPORTANT; explode will not work correctly if index is not unique
+
+    chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)] # splitting helps with memory, but it also has an impact on run time. 
+    del df # free memory (Dont think we can avoid the DF being loaded in twice for a moment)
+    function = partial(process_explode_json_array, array_column=array_column, value_col_name= value_col_name, place_key= place_key,
+                       file_key = file_key,array_sequence = array_sequence, zero_index = zero_index)
+    with Pool() as pool:
+        results = pool.map(function,chunks_list)
+    return pd.concat(results)
+
+### ------------------------------------------ END JSON FAST SECTION--------------------------------------------------------
 
 ### ---------------------------------------CORE, GEO, AND PATTERNS SECTION -----------------------------------------------
 
