@@ -268,7 +268,7 @@ def explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name=N
       array_sequence = array_column + '_sequence'
     if (value_col_name is None):
       value_col_name = array_column + '_value'
-    if(verbose): print("Running explode_json_array()")
+    if(verbose): print("Running explode_json_array_fast()")
     if(keep_index):
         df['index_original'] = df.index
     df.reset_index(drop=True, inplace=True) # THIS IS IMPORTANT; explode will not work correctly if index is not unique
@@ -369,6 +369,5 @@ def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **
         temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
         li.append(temp_df)
     return pd.concat(li, axis=0,ignore_index=True)
-
 
 ### --------------------------------------- END SOCIAL DISTANCING SECTION -----------------------------------------------
