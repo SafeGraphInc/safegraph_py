@@ -236,7 +236,7 @@ def unpack_json_fast(df, json_column = 'visitor_home_cbgs', index_name = None, k
     return pd.concat(results)
 
 def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name=None,
-                         value_col_name=None, keep_index=False):
+                         value_col_name=None, keep_index=False, chunk_n = 1000):
     if (key_col_name is None):
       key_col_name = json_column + '_key'
     if (value_col_name is None):
@@ -246,7 +246,7 @@ def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name
     # we can handle NA jsons now, so lets just keep them 
     #df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
     df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
-    df_exp = unpack_json_fast(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
+    df_exp = unpack_json_fast(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name, chunk_n=chunk_n)
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
