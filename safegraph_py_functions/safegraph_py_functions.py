@@ -202,7 +202,6 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
     day_visits_exp[value_col_name] = day_visits_exp[value_col_name].astype('int64')
     df.drop([array_column+'_json'], axis=1, inplace=True)
     return pd.merge(df, day_visits_exp, on=[place_key,file_key])
-    return df
 
 ### ------------------------------------------ END JSON SECTION--------------------------------------------------------
 
@@ -232,7 +231,7 @@ def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name
 def explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
     if(verbose): print("Running explode_json_array()")
     chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)] 
-    del df # free memory 
+    #del df # free memory 
     partial_explode_json = partial(explode_json_array, array_column=array_column, value_col_name= value_col_name, place_key= place_key,
                        file_key = file_key,array_sequence = array_sequence, zero_index = zero_index)
     with Pool() as pool:
