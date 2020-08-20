@@ -188,6 +188,7 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
     if(verbose): print("Running explode_json_array()")
     if(keep_index):
         df['index_original'] = df.index
+    df = df.copy()
     df.reset_index(drop=True, inplace=True) # THIS IS IMPORTANT; explode will not work correctly if index is not unique
     df[array_column + '_json'] = load_json_nan(df,array_column)
     day_visits_exp = df[[place_key, file_key, array_column+'_json']].explode(array_column+'_json')
@@ -207,6 +208,10 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
 
 # index_name if you want your index (such as CBG) to be it's own column, then provide this 
 def unpack_json_fast(df, json_column = 'visitor_home_cbgs', index_name = None, key_col_name = None, value_col_name = None, chunk_n = 1000):
+    if index_name is None:
+        df = df[[json_column]]
+    else:
+        df = df[[json_column, index_name]]
     chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)]
     
     partial_unpack_json = partial(unpack_json, json_column=json_column, index_name= index_name, key_col_name= key_col_name, value_col_name= value_col_name)
@@ -218,20 +223,25 @@ def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name
                          value_col_name=None, keep_index=False, chunk_n = 1000):
     if (keep_index):
         df['index_original'] = df.index
-        
+    
     df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
-    df_exp = unpack_json_fast(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name, chunk_n=chunk_n)
+    df_exp = df[[json_column]] 
+    df_exp = unpack_json_fast(df_exp, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name, chunk_n=chunk_n)
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
-def explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
+def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safegraph_place_id', file_key='date_range_start', value_col_name=None, array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
     if(verbose): print("Running explode_json_array()")
-    chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)] 
+    df_subset = df[[array_column,place_key,file_key]] # send only what we need
+    chunks_list = [df_subset[i:i+chunk_n] for i in range(0,df_subset.shape[0],chunk_n)] 
     partial_explode_json = partial(explode_json_array, array_column=array_column, value_col_name= value_col_name, place_key= place_key,
                        file_key = file_key,array_sequence = array_sequence, zero_index = zero_index)
     with Pool() as pool:
         results = pool.map(partial_explode_json,chunks_list)
-    return pd.concat(results)
+    df_subset = pd.concat(results)
+    df_subset.drop([array_column,file_key],axis=1,inplace=True) # preparing to merge by dropping duplicates
+    
+    return df.merge(df_subset, on=[place_key])
 
 ### ------------------------------------------ END JSON FAST SECTION--------------------------------------------------------
 
