@@ -145,16 +145,16 @@ def load_json_nan(df, json_col):
 def unpack_json(df, json_column='visitor_home_cbgs', index_name= None, key_col_name=None,
                          value_col_name=None):
     # these checks are a inefficent for multithreading, but it's not a big deal
-    if key_col_name == None:
+    if key_col_name is None:
         key_col_name = json_column + '_key'
-    if value_col_name == None:
+    if value_col_name is None:
         value_col_name = json_column + '_value'
     if (df.index.unique().shape[0] < df.shape[0]):
         raise ("ERROR -- non-unique index found")
     df = df.copy()
     df[json_column + '_dict'] = load_json_nan(df,json_column)
     all_sgpid_cbg_data = []  # each cbg data point will be one element in this list
-    if index_name == None:
+    if index_name is None:
       for index, row in df.iterrows():
           this_sgpid_cbg_data = [{'orig_index': index, key_col_name: key, value_col_name: value} for key, value in
                                 row[json_column + '_dict'].items()]
@@ -166,7 +166,6 @@ def unpack_json(df, json_column='visitor_home_cbgs', index_name= None, key_col_n
                                row[json_column + '_dict'].items()]
         all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
     
-    #del df # free memory 
     all_sgpid_cbg_data = pd.DataFrame(all_sgpid_cbg_data)
     all_sgpid_cbg_data.set_index('orig_index', inplace=True)
     return all_sgpid_cbg_data
@@ -176,7 +175,6 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name=None
                          value_col_name=None, keep_index=False):
     if (keep_index):
         df['index_original'] = df.index
-    #df = df.dropna(subset=[json_column]).copy()  # Drop nan jsons
     df.reset_index(drop=True, inplace=True)  # Every row must have a unique index
     df_exp = unpack_json(df, json_column=json_column, key_col_name=key_col_name, value_col_name=value_col_name)
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
@@ -209,10 +207,8 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
 
 # index_name if you want your index (such as CBG) to be it's own column, then provide this 
 def unpack_json_fast(df, json_column = 'visitor_home_cbgs', index_name = None, key_col_name = None, value_col_name = None, chunk_n = 1000):
-    
     chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)]
-    #del df # free memory (Dont think we can avoid the DF being loaded in twice for a moment)
-
+    
     partial_unpack_json = partial(unpack_json, json_column=json_column, index_name= index_name, key_col_name= key_col_name, value_col_name= value_col_name)
     with Pool() as pool:
         results = pool.map(partial_unpack_json,chunks_list)
@@ -231,7 +227,6 @@ def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name
 def explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
     if(verbose): print("Running explode_json_array()")
     chunks_list = [df[i:i+chunk_n] for i in range(0,df.shape[0],chunk_n)] 
-    #del df # free memory 
     partial_explode_json = partial(explode_json_array, array_column=array_column, value_col_name= value_col_name, place_key= place_key,
                        file_key = file_key,array_sequence = array_sequence, zero_index = zero_index)
     with Pool() as pool:
@@ -272,7 +267,6 @@ def read_core_folder_zip(path_to_core, compression='gzip', *args, **kwargs):
 def read_geo_zip(path_to_geo, compression='gzip', *args, **kwargs):
   zf = ZipFile(path_to_geo)
   result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs)
-
   return result
 
 
