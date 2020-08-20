@@ -33,7 +33,7 @@ The unpack_json function is used to explode JSON objects within pandas, vertical
 * To change the column name where the Value from the Key:Value pair will go, simply add the argument 'value_col_name'
 
 #### unpack_json_fast(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count', chunk_n= 1000)
-Multithreaded version of unpack_json(), reference above for more details. The parameter chunk_n is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
+Multithreaded version of unpack_json(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
 #### unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count', keep_index=False)
 
@@ -43,7 +43,7 @@ The unpack_json_and_merge function is used to explode JSON objects within pandas
 * To change the column name where the Value from the Key:Value pair will go, simply add the argument 'value_col_name'
 
 #### unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count', keep_index=False, chunk_n=1000)
-Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter chunk_n is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
+Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
 #### explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False)
 
@@ -53,7 +53,7 @@ The explode_json_array function is similar to the unpack_json functions, except 
 * To change the column name where the array sequence will be displayed (i.e. - days, months, hours, etc), simply add the argument _array_sequence_
 
 #### explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False, chunk_n = 1000)
-Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter chunk_n is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
+Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
 #### read_core_folder(path_to_core, compression='gzip', args, kwargs)
 
