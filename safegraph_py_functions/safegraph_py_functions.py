@@ -239,9 +239,9 @@ def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safeg
     with Pool() as pool:
         results = pool.map(partial_explode_json,chunks_list)
     df_subset = pd.concat(results)
-    df_subset.drop([array_column,file_key],axis=1,inplace=True) # preparing to merge by dropping duplicates
+    df_subset.drop([array_column],axis=1,inplace=True) # preparing to merge by dropping duplicates
     
-    return df.merge(df_subset, on=[place_key])
+    return df.merge(df_subset, on=[place_key,file_key])
 
 ### ------------------------------------------ END JSON FAST SECTION--------------------------------------------------------
 
