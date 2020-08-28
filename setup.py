@@ -1,6 +1,9 @@
-from setuptools import setup, find_packages
+import setuptools
 
-setup(name='safegraph_py_functions',
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(name='safegraph_py_functions',
 	version='1.1.0',
     description='SafeGraph Python Library',
     author='lynzt',
