@@ -7,6 +7,8 @@ from zipfile import ZipFile
 from functools import partial
 from multiprocessing import Pool
 
+__version__ = "1.1.0"
+
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
 def test_me():
