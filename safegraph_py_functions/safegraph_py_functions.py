@@ -12,7 +12,9 @@ from multiprocessing import Pool
 def test_me():
     print("Hello World")
 
-
+def version():
+    print("safegraph_py v1.1.0")
+    
 def help():
     print('''
 
