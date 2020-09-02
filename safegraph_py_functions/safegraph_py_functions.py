@@ -75,7 +75,6 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             file_key
             array_sequence
             keep_index (&)
-            verbose (&)
             zero_index (&)
 
 ----------------------[JSON Fast Section]----------------------
@@ -183,12 +182,11 @@ def unpack_json_and_merge(df, json_column='visitor_home_cbgs', key_col_name=None
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
-def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, verbose=True, zero_index=False):
+def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, zero_index=False):
     if (array_sequence is None):
       array_sequence = array_column + '_sequence'
     if (value_col_name is None):
       value_col_name = array_column + '_value'
-    if(verbose): print("Running explode_json_array()")
     if(keep_index):
         df['index_original'] = df.index
     df = df.copy()
@@ -233,12 +231,11 @@ def unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name
     df = df.merge(df_exp, left_index=True, right_index=True).reset_index(drop=True)
     return df
 
-def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safegraph_place_id', file_key='date_range_start', value_col_name=None, array_sequence=None, keep_index=False, verbose=True, zero_index=False, chunk_n = 1000):
-    if(verbose): print("Running explode_json_array()")
+def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safegraph_place_id', file_key='date_range_start', value_col_name=None, array_sequence=None, keep_index=False, zero_index=False, chunk_n = 1000):
     df_subset = df[[array_column,place_key,file_key]] # send only what we need
     chunks_list = [df_subset[i:i+chunk_n] for i in range(0,df_subset.shape[0],chunk_n)] 
     partial_explode_json = partial(explode_json_array, array_column=array_column, value_col_name= value_col_name, place_key= place_key,
-                       file_key = file_key,array_sequence = array_sequence, zero_index = zero_index)
+                       file_key = file_key, array_sequence = array_sequence, zero_index = zero_index)
     with Pool() as pool:
         results = pool.map(partial_explode_json,chunks_list)
     df_subset = pd.concat(results)
