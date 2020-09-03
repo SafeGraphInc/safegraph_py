@@ -45,14 +45,14 @@ The unpack_json_and_merge function is used to explode JSON objects within pandas
 #### unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count', keep_index=False, chunk_n=1000)
 Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
-#### explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False)
+#### explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, zero_index=False)
 
 The explode_json_array function is similar to the unpack_json functions, except it is designed to handle the arrays that are just Values (as opposed to Key:Value pairs). The default for this function is set to the 'visits_by_day' column, but can be set to any simple array column in the SafeGraph data by reassigning the _array_column_ argument.
 <br>
 * To change the column name where the array values will be displayed, simply add the argument value_col_name
 * To change the column name where the array sequence will be displayed (i.e. - days, months, hours, etc), simply add the argument _array_sequence_
 
-#### explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, verbose=True, zero_index=False, chunk_n = 1000)
+#### explode_json_array_fast(df, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, zero_index=False, chunk_n = 1000)
 Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
 #### read_core_folder(path_to_core, compression='gzip', args, kwargs)
