@@ -136,6 +136,10 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
   ''')
 
+### dtype dict
+
+sg_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
+
 
 ### -------------------------------------- JSON Functions ---------------------------------------------------------------
 
@@ -248,14 +252,14 @@ def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safeg
 ### ---------------------------------------CORE, GEO, AND PATTERNS SECTION -----------------------------------------------
 
 
-def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
+def read_core_folder(path_to_core, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
     core_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
     print(f"You are about to load in {len(core_files)} core files")
 
     li = []
     for core in core_files:
         print(core)
-        df = pd.read_csv(core, compression=compression, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs)
+        df = pd.read_csv(core, compression=compression, dtype=dtype, *args, **kwargs)
         li.append(df)
 
     SG_core = pd.concat(li, axis=0)
@@ -263,10 +267,10 @@ def read_core_folder(path_to_core, compression='gzip',*args, **kwargs):
 
 ### added a new core read that takes the information straight from the zipped file (like you get it from the catelog)
 
-def read_core_folder_zip(path_to_core, compression='gzip', *args, **kwargs):
+def read_core_folder_zip(path_to_core, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
     zip_file = ZipFile(path_to_core)
 
-    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), compression=compression, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs)
+    dfs = {text_file.filename: pd.read_csv(zip_file.open(text_file.filename), compression=compression, dtype=dtype, *args, **kwargs)
            for text_file in zip_file.infolist()
            if text_file.filename.endswith('.csv.gz')}
 
@@ -274,26 +278,25 @@ def read_core_folder_zip(path_to_core, compression='gzip', *args, **kwargs):
 
     return SG_core
 
-def read_geo_zip(path_to_geo, compression='gzip', *args, **kwargs):
+def read_geo_zip(path_to_geo, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
   zf = ZipFile(path_to_geo)
-  result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, *args, **kwargs)
+  result=pd.read_csv(zf.open('core_poi-geometry.csv.gz'), compression=compression, dtype=dtype, *args, **kwargs)
   return result
 
 
-def read_pattern_single(f_path, compression='gzip', *args, **kwargs):
-    df = pd.read_csv(f_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str}, compression=compression, *args, **kwargs)
+def read_pattern_single(f_path, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
+    df = pd.read_csv(f_path, dtype=dtype, compression=compression, *args, **kwargs)
     return df
 
 
-def read_pattern_multi(path_to_pattern, compression='gzip', *args, **kwargs):
+def read_pattern_multi(path_to_pattern, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
     pattern_files = glob.glob(os.path.join(path_to_pattern, "*.csv.gz"))
     print(f"You are about to load in {len(pattern_files)} pattern files")
 
     li = []
     for pattern in pattern_files:
         print(pattern)
-        df = pd.read_csv(pattern, compression=compression, *args, **kwargs,
-                         dtype={'postal_code': str, 'phone_number': str, 'naics_code': str})
+        df = pd.read_csv(pattern, compression=compression, dtype=dtype, *args, **kwargs)
         li.append(df)
 
     SG_pattern = pd.concat(li, axis=0)
