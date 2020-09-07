@@ -25,9 +25,11 @@ sgpy.read_pattern_single(f_path) # returns a Pandas DF from a single patterns fi
 
 ## Functions
 
+_A quick note before delving into the functions. There are 2 types of JSON objects that SafeGraph uses, thus 2 different functions are required. The 'unpack_json' function is designed specifically for key:value JSON object such as: 'visitor_home_cbgs', 'visitor_daytime_cbgs', etc... For columns that contain a JSON list of values, we have the 'explode_json_array' function. These columns only have a list of values (a list of 1 data type), such as: 'visits_by_day', 'visits_by_each_hour', etc... They cannot be used interchangeably due to the nature of the JSON objects._ 
+
 #### unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count')
 
-The unpack_json function is used to explode JSON objects within pandas, vertically, into a new DF. The default for this function is set to the visitor_home_cbgs collumn, but can be set to any of the JSON columns you might come across in the SafeGraph data. 
+The unpack_json function is used to explode JSON objects within pandas, vertically, into a new DF. The default for this function is set to the visitor_home_cbgs column, but can be set to any of the JSON columns you might come across in the SafeGraph data. NOTE: This should be used with Key:Value columns only -- i.e. The 'visitor_home_cbgs' column. The key:values of the 'visitor_home_cbgs' look as follows: {"360610112021": 603, "460610112021": 243, "560610112021": 106, "660610112021": 87, "660610112021": 51}
 <br>
 * To change the column name where the Key from the Key:Value pair will go, simply add the argument 'key_col_name'
 * To change the column name where the Value from the Key:Value pair will go, simply add the argument 'value_col_name'
@@ -45,9 +47,9 @@ The unpack_json_and_merge function is used to explode JSON objects within pandas
 #### unpack_json_and_merge_fast(df, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count', keep_index=False, chunk_n=1000)
 Multithreaded version of unpack_json_and_merge(), reference above for more details. The parameter 'chunk_n' is the size of one chunk. The dataframe is then split into len(df)//chunk_n chunks. These chunks are what is distributed across multiple threads. 
 
-#### explode_json_array(df_, array_column = 'visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, zero_index=False)
+#### explode_json_array(df_, array_column ='visits_by_day', value_col_name='day_visit_counts',place_key='safegraph_place_id', file_key='date_range_start', array_sequence='day', keep_index=False, zero_index=False)
 
-The explode_json_array function is similar to the unpack_json functions, except it is designed to handle the arrays that are just Values (as opposed to Key:Value pairs). The default for this function is set to the 'visits_by_day' column, but can be set to any simple array column in the SafeGraph data by reassigning the _array_column_ argument.
+The explode_json_array function is similar to the unpack_json functions, except it is designed to handle the arrays that are just Values (as opposed to Key:Value pairs). The default for this function is set to the 'visits_by_day' column, but can be set to any simple array column in the SafeGraph data by reassigning the _array_column_ argument. NOTE: This function should only be used with JSON objects of a list of Values (as opposed to key:value pairs). For instance in the 'visits_by_day' we have a JSON list of values only. The column appears as follows: [33, 22, 33, 22, 33, 22, 22]
 <br>
 * To change the column name where the array values will be displayed, simply add the argument value_col_name
 * To change the column name where the array sequence will be displayed (i.e. - days, months, hours, etc), simply add the argument _array_sequence_
