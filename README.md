@@ -25,7 +25,7 @@ sgpy.read_pattern_single(f_path) # returns a Pandas DF from a single patterns fi
 
 ## Functions
 
-_A quick note before delving into the functions. There are 2 types of JSON objects that SafeGraph uses, thus 2 different functions are required. The 'unpack_json' function is designed specifically for key:value JSON object such as: 'visitor_home_cbgs', 'visitor_daytime_cbgs', etc... For columns that contain a JSON list of values, we have the 'explode_json_array' function. These columns only have a list of values (a list of 1 data type), such as: 'visits_by_day', 'visits_by_each_hour', etc... They cannot be used interchangeably due to the nature of the JSON objects._ 
+>_A quick note before delving into the functions. There are 2 types of JSON objects that SafeGraph uses, thus 2 different functions are required. The 'unpack_json' function is >designed specifically for key:value JSON object such as: 'visitor_home_cbgs', 'visitor_daytime_cbgs', etc... For columns that contain a JSON list of values, we have the >'explode_json_array' function. These columns only have a list of values (a list of 1 data type), such as: 'visits_by_day', 'visits_by_each_hour', etc... They cannot be used >interchangeably due to the nature of the JSON objects._ 
 
 #### unpack_json(df_, json_column='visitor_home_cbgs', key_col_name='visitor_home_cbg', value_col_name='cbg_visitor_count')
 
