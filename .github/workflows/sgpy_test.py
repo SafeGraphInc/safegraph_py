@@ -1,7 +1,13 @@
 # content of sgpy_test.py
-def func(x):
+
+import pytest
+
+def a(x):
     return x + 1
 
 
 def test_answer():
-    assert func(3) == 4
+    assert a(3) == 4
+
+def wrong_answer():
+	assert a(2) == 4
