@@ -1,4 +1,4 @@
-# content of test_sample.py
+# content of sgpy_test.py
 def func(x):
     return x + 1
 
