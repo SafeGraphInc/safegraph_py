@@ -1,5 +1,5 @@
 # content of sgpy_test.py
-
+from safegraph_py_functions import safegraph_py_functions as sgpy
 import pytest
 
 class TestClass:
@@ -10,3 +10,7 @@ class TestClass:
     def test_two(self):
         x = "hello"
         assert hasattr(x, 'check')
+
+    def test_three(self):
+    	x = sgpy.test_me()
+    	assert 'e' in x
