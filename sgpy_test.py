@@ -3,6 +3,7 @@ from safegraph_py_functions import safegraph_py_functions as sgpy
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
+import json
 
 
 ### Shelf stable code
