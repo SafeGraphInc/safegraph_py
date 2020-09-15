@@ -116,3 +116,11 @@ hold2 = 5
 def test_simple():
     value = add(hold1, hold2)
     assert value == 10
+
+def test_simple2():
+    
+    test_df = sgpy.unpack_json(df)
+
+    df_json_standard = unpack_json(df)
+
+    pdt.assert_frame_equal(test_df, df_json_standard)
