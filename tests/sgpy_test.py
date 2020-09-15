@@ -87,8 +87,16 @@ test_df = sgpy.unpack_json(df)
 
 df_json_standard = unpack_json(df)
 
-x = 5
-y = 5
+
+
+
+### Test setion
+
+def add(a, b):
+    return a + b
+
+hold1 = 5
+hold2 = 5
 
 
 
@@ -106,5 +114,5 @@ y = 5
 
 
 def test_simple():
-    value = add(x, y)
+    value = add(hold1, hold2)
     assert value == 10
