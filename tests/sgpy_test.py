@@ -124,3 +124,7 @@ def test_simple2():
     df_json_standard = unpack_json(df)
 
     pdt.assert_frame_equal(test_df, df_json_standard)
+
+def test_fail():
+    valuef = add(hold1, hold2)
+    assert value == 25
