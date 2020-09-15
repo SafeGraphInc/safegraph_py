@@ -89,12 +89,11 @@ df_json_standard = unpack_json(df)
 
 
 
-pdt.assert_frame_equal(test_df, df_json_standard)
 
-# class TestClass:
-#     def test_one(self):
-#         x = "this"
-#         assert 'h' in x
+
+class TestClass:
+    def test_one(self):
+        assert pdt.assert_frame_equal(test_df, df_json_standard)
 
 #     def test_two(self):
 #         x = "hello"
@@ -103,3 +102,6 @@ pdt.assert_frame_equal(test_df, df_json_standard)
 #     def test_one(self):
         
 #         pdt.assert_series_equal(s1, s2)
+
+
+pdt.assert_frame_equal(test_df, df_json_standard)
