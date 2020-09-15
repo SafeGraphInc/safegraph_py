@@ -126,5 +126,10 @@ def test_simple2():
     pdt.assert_frame_equal(test_df, df_json_standard)
 
 def test_fail():
-    valuef = add(hold1, hold2)
-    assert valuef == 25
+
+    test_df = sgpy.unpack_json(df)
+
+    df_array_standard = explode_json_array(df)
+
+    pdt.assert_frame_equal(test_df, df_array_standard)
+
