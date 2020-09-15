@@ -87,13 +87,14 @@ test_df = sgpy.unpack_json(df)
 
 df_json_standard = unpack_json(df)
 
+x = 5
+y = 5
 
 
 
-
-class TestClass:
-    def test_one(self):
-        assert pdt.assert_frame_equal(test_df, df_json_standard)
+# class TestClass:
+#     def test_simple(self):
+#         assert pdt.assert_frame_equal(test_df, df_json_standard)
 
 #     def test_two(self):
 #         x = "hello"
@@ -104,4 +105,6 @@ class TestClass:
 #         pdt.assert_series_equal(s1, s2)
 
 
-pdt.assert_frame_equal(test_df, df_json_standard)
+def test_simple():
+    value = add(x, y)
+    assert value == 10
