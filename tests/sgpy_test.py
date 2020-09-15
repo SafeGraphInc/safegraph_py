@@ -127,4 +127,4 @@ def test_simple2():
 
 def test_fail():
     valuef = add(hold1, hold2)
-    assert value == 25
+    assert valuef == 25
