@@ -73,6 +73,7 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
 
 ### End shelf stable
 
+var2 = 'test'
 
 
 data = {'safegraph_place_id':  ['sg:64d0ee4695af4ab4906fe82997ead9ff', 'sg:001955fa1c994b4c8c877316a66dd986', 'sg:001e39c6b18645a5950b13a278b242c3', 'sg:00267c6356804259b6c92ba31c842f5a', 'sg:0029991464e349e8b5b985609360cfa4'],
