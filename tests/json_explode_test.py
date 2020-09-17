@@ -72,7 +72,7 @@ def test_simple2():
     
     test_df = sgpy.unpack_json(df)
 
-    df_json_standard = unpack_json(df)
+    df_json_standard = pd.DataFrame(expected_data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value'])
 
     pdt.assert_frame_equal(test_df, df_json_standard)
 
