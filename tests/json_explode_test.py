@@ -63,6 +63,8 @@ df = pd.DataFrame (data, columns = ['safegraph_place_id', 'visits_by_day', 'visi
 
 cols = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value']
 
+new_index = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
+
 ### Test section
 
 def add(a, b):
@@ -81,7 +83,7 @@ def test_unpack_json():
     
     action = unpack_json(df)
 
-    expected = pd.DataFrame(expected_data)
+    expected = pd.DataFrame(expected_data, index=[i for i in new_index])
 
     pdt.assert_frame_equal(action, expected)
 
