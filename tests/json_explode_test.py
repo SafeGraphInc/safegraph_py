@@ -83,7 +83,7 @@ def test_unpack_json():
     
     action = unpack_json(df)
 
-    expected = pd.DataFrame(expected_data, index=new_index)
+    expected = pd.DataFrame(expected_data, index=new_index).rename_axis('orig_index')
 
     pdt.assert_frame_equal(action, expected)
 
