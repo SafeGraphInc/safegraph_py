@@ -30,14 +30,14 @@ data = {'safegraph_place_id':  ['sg:64d0ee4695af4ab4906fe82997ead9ff', 'sg:00195
 
 df = pd.DataFrame (data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start'])
 
-test_df = sgpy.unpack_json(df)
+# test_df = sgpy.unpack_json(df)
 
 # df_json_standard = unpack_json(df)
 
-df_json_standard = pd.DataFrame(expected_data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value'])
+# df_json_standard = pd.DataFrame(expected_data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value'])
 
 
-
+cols = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value']
 
 ### Test setion
 
@@ -70,9 +70,9 @@ def test_simple2():
 
     ''' This is a test of my new DF -- Please don't fail! '''
     
-    test_df = sgpy.unpack_json(df)
+    test_df = sgpy.unpack_json_and_merge(df)
 
-    df_json_standard = pd.DataFrame(expected_data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value'])
+    df_json_standard = pd.DataFrame(expected_data)
 
     pdt.assert_frame_equal(test_df, df_json_standard)
 
