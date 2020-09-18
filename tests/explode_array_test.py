@@ -31,7 +31,6 @@ def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, 
     day_visits_exp[value_col_name] = day_visits_exp[value_col_name].astype('int64')
     df.drop([array_column+'_json'], axis=1, inplace=True)
     return pd.merge(df, day_visits_exp, on=[place_key,file_key])
-    return all_sgpid_cbg_data
 
 ### End function to be tested
 
