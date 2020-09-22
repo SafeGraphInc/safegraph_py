@@ -1,5 +1,5 @@
-# content of json_explode_test.py
-from safegraph_py_functions import safegraph_py_functions as sgpy
+# content of json_explode_merge_test.py
+from safegraph_py_functions.safegraph_py_functions import load_json_nan, unpack_json_and_merge, unpack_json_and_merge_fast
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
@@ -45,15 +45,25 @@ def always_pass_test():
     value = add(hold1, hold2)
     assert value == 10
 
-def test_simple2():
+def test_unpack_json_and_merge():
 
-    ''' This is a test of unpack json and merge'''
+    ''' This is a test of unpack json and merge '''
     
-    test_df = sgpy.unpack_json_and_merge(df)
+    action = unpack_json_and_merge(df)
 
-    df_json_standard = pd.DataFrame(expected_data)
+    expected = pd.DataFrame(expected_data)
 
-    pdt.assert_frame_equal(test_df, df_json_standard)
+    pdt.assert_frame_equal(action, expected)
+
+def test_unpack_json_and_merge_fast():
+
+    ''' This is a test of unpack json and merge fast '''
+
+    action1 = unpack_json_and_merge_fast(df)
+
+    expected1 = pd.DataFrame(expected_data)
+
+    pdt.assert_frame_equal(action1, expected1)
 
 
 ### |-------------- Only uncomment when you need to test pytest functionality -------------|

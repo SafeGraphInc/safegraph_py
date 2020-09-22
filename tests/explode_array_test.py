@@ -66,7 +66,7 @@ def test_explode_array_fast():
     pdt.assert_frame_equal(action1, expected1)
 
 
-### |-------------- Only uncomment when you need to test pytest functionality -------------|
+### |-------------- Only uncomment when you need to test pytest FAIL functionality -------------|
 
 # def test_fail():
 

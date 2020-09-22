@@ -1,45 +1,10 @@
 # content of json_explode_test.py
-from safegraph_py_functions import safegraph_py_functions as sgpy
+from safegraph_py_functions.safegraph_py_functions import load_json_nan, unpack_json, unpack_json_fast
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
 import json
 
-
-### Function to be tested -----
-
-def load_json_nan(df, json_col):
-  return df[json_col].apply(lambda x: json.loads(x) if type(x) == str else x)
-
-def unpack_json(df, json_column='visitor_home_cbgs', index_name= None, key_col_name=None,
-                         value_col_name=None):
-    # these checks are a inefficent for multithreading, but it's not a big deal
-    if key_col_name is None:
-        key_col_name = json_column + '_key'
-    if value_col_name is None:
-        value_col_name = json_column + '_value'
-    if (df.index.unique().shape[0] < df.shape[0]):
-        raise ("ERROR -- non-unique index found")
-    df = df.copy()
-    df[json_column + '_dict'] = load_json_nan(df,json_column)
-    all_sgpid_cbg_data = []  # each cbg data point will be one element in this list
-    if index_name is None:
-      for index, row in df.iterrows():
-          this_sgpid_cbg_data = [{'orig_index': index, key_col_name: key, value_col_name: value} for key, value in
-                                row[json_column + '_dict'].items()]
-          all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
-    else:
-      for index, row in df.iterrows():
-        temp = row[index_name]
-        this_sgpid_cbg_data = [{'orig_index': index, index_name:temp, key_col_name: key, value_col_name: value} for key, value in
-                               row[json_column + '_dict'].items()]
-        all_sgpid_cbg_data = all_sgpid_cbg_data + this_sgpid_cbg_data
-    
-    all_sgpid_cbg_data = pd.DataFrame(all_sgpid_cbg_data)
-    all_sgpid_cbg_data.set_index('orig_index', inplace=True)
-    return all_sgpid_cbg_data
-
-### End function to be tested
 
 ### Expected DFs
 
@@ -87,8 +52,16 @@ def test_unpack_json():
 
     pdt.assert_frame_equal(action, expected)
 
+def test_unpack_json_fast():
+    ''' This is a test of unpack json fast '''
 
-### |-------------- Only uncomment when you need to test pytest functionality -------------|
+    action1 = unpack_json_fast(df)
+
+    expected1 = pd.DataFrame(expected_data, index=new_index.rename_axis('orig_index'))
+
+    pdt.assert_frame_equal(action1, expected1)
+
+### |-------------- Only uncomment when you need to test pytest FAIL functionality -------------|
 
 # def test_fail():
 
