@@ -1,5 +1,5 @@
 # content of json_explode_test.py
-from safegraph_py_functions import safegraph_py_functions as sgpy
+from safegraph_py.safegraph_py_functions import safegraph_py_functions as sgpy
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
@@ -78,7 +78,7 @@ def test_unpack_json():
 
     ''' This is a test of unpack json'''
     
-    action = explode_json_array(df)
+    action = sgpy.explode_json_array(df)
 
     expected = pd.DataFrame(expected_data)
 
