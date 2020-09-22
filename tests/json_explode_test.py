@@ -57,7 +57,7 @@ def test_unpack_json_fast():
 
     action1 = unpack_json_fast(df)
 
-    expected1 = pd.DataFrame(expected_data, index=new_index.rename_axis('orig_index'))
+    expected1 = pd.DataFrame(expected_data, index=new_index).rename_axis('orig_index')
 
     pdt.assert_frame_equal(action1, expected1)
 
