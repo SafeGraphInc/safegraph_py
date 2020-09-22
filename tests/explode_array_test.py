@@ -1,5 +1,5 @@
 # content of json_explode_test.py
-from safegraph_py.safegraph_py_functions import * as sgpy
+from safegraph_py.safegraph_py_functions import safegraph_py_functions as sgpy
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt

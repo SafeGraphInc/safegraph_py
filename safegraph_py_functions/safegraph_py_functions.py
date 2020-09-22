@@ -254,7 +254,7 @@ def explode_json_array_fast(df, array_column = 'visits_by_day', place_key='safeg
 
 def read_core_folder(path_to_core, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
     core_files = glob.glob(os.path.join(path_to_core, "*.csv.gz"))
-    print(f"You are about to load in {len(core_files)} core files")
+    # print(f"You are about to load in {len(core_files)} core files")
 
     li = []
     for core in core_files:
