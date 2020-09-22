@@ -1,38 +1,10 @@
 # content of json_explode_test.py
-from safegraph_py_functions.safegraph_py_functions import load_json_nan, explode_json_array
+from safegraph_py_functions.safegraph_py_functions import load_json_nan, explode_json_array, explode_json_array_fast
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
 import json
 
-
-### Function to be tested -----
-
-def load_json_nan(df, json_col):
-  return df[json_col].apply(lambda x: json.loads(x) if type(x) == str else x)
-
-def explode_json_array(df, array_column = 'visits_by_day', value_col_name=None, place_key='safegraph_place_id', file_key='date_range_start', array_sequence=None, keep_index=False, zero_index=False):
-    if (array_sequence is None):
-      array_sequence = array_column + '_sequence'
-    if (value_col_name is None):
-      value_col_name = array_column + '_value'
-    if(keep_index):
-        df['index_original'] = df.index
-    df = df.copy()
-    df.reset_index(drop=True, inplace=True) # THIS IS IMPORTANT; explode will not work correctly if index is not unique
-    df[array_column + '_json'] = load_json_nan(df,array_column)
-    day_visits_exp = df[[place_key, file_key, array_column+'_json']].explode(array_column+'_json')
-    day_visits_exp['dummy_key'] = day_visits_exp.index
-    day_visits_exp[array_sequence] = day_visits_exp.groupby([place_key, file_key])['dummy_key'].rank(method='first', ascending=True).astype('int64')
-    if(zero_index):
-      day_visits_exp[array_sequence] = day_visits_exp[array_sequence] -1
-    day_visits_exp.drop(['dummy_key'], axis=1, inplace=True)
-    day_visits_exp.rename(columns={array_column+'_json': value_col_name}, inplace=True)
-    day_visits_exp[value_col_name] = day_visits_exp[value_col_name].astype('int64')
-    df.drop([array_column+'_json'], axis=1, inplace=True)
-    return pd.merge(df, day_visits_exp, on=[place_key,file_key])
-
-### End function to be tested
 
 ### Expected DFs
 
@@ -74,15 +46,24 @@ def always_pass_test():
     value = add(hold1, hold2)
     assert value == 10
 
-def test_unpack_json():
+def test_explode_array():
 
-    ''' This is a test of unpack json'''
+    ''' This is a test of explode json array '''
     
     action = explode_json_array(df)
 
     expected = pd.DataFrame(expected_data)
 
     pdt.assert_frame_equal(action, expected)
+
+def test_explode_array_fast():
+    ''' This is a test of explode json array fast '''
+
+    action1 = explode_json_array_fast(df)
+
+    expected1 = pd.DataFrame(expected_data)
+
+    pdt.assert_frame_equal(action1, expected1)
 
 
 ### |-------------- Only uncomment when you need to test pytest functionality -------------|
