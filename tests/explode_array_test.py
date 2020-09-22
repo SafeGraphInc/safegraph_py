@@ -1,5 +1,5 @@
 # content of json_explode_test.py
-from safegraph_py.safegraph_py_functions.safegraph_py_functions import load_json_nan, explode_json_array
+from safegraph_py_functions.safegraph_py_functions import load_json_nan, explode_json_array
 import pytest
 import pandas as pd
 import pandas.util.testing as pdt
