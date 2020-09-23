@@ -8,10 +8,7 @@ import json
 
 ### Expected DFs
 
-data = "mock_data_v2020_09/weekly_demo.csv.gz"
-
-# df = pd.read_csv(data, compression='gzip')
-
+data = "mock_data_v2020_09/weekly_demo.csv"
 
 ### End Expected DFs
 
