@@ -291,7 +291,7 @@ def read_pattern_single(f_path, compression='gzip', dtype=sg_dtypes, *args, **kw
 
 def read_pattern_multi(path_to_pattern, compression='gzip', dtype=sg_dtypes, *args, **kwargs):
     pattern_files = glob.glob(os.path.join(path_to_pattern, "*.csv.gz"))
-    print(f"You are about to load in {len(pattern_files)} pattern files")
+    # print(f"You are about to load in {len(pattern_files)} pattern files")
 
     li = []
     for pattern in pattern_files:
