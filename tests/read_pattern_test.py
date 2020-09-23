@@ -8,7 +8,7 @@ import json
 
 ### Expected DFs
 
-data = "mock_data_v2020_09/weekly_demo.csv"
+file_path = "mock_data_v2020_09/weekly_demo.csv.gz"
 
 ### End Expected DFs
 
@@ -29,9 +29,9 @@ def test_read_pattern_single():
 
     ''' This is a test of read pattern single'''
     
-    action = read_pattern_single(data)
+    action = read_pattern_single(file_path)
 
-    expected = pd.read_csv(data, compression='gzip')
+    expected = pd.read_csv(file_path, compression='gzip')
 
     pdt.assert_frame_equal(action, expected)
 
