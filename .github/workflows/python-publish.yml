@@ -32,4 +32,4 @@ jobs:
         pip install --upgrade pytest
         pip install --upgrade pytest-cov
         pip install -q --upgrade git+https://github.com/SafeGraphInc/safegraph_py
-        pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=tests/ --cov-report=xml --cov-report=html
+        pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
