@@ -9,7 +9,7 @@ import gzip
 
 ### Expected DFs
 
-file_path = "weekly_demo.csv.gz"
+file_path = "tests/weekly_demo.csv.gz"
 
 ### End Expected DFs
 
