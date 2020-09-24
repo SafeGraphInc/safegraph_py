@@ -7,13 +7,13 @@ import json
 import gzip
 
 
-### Expected DFs
+### Files for analysis
 
 file_path = "tests/mock_data_v2020_09/weekly_demo.csv.gz"
 
 file_path_multi = "tests/mock_data_v2020_09/weekly_multi"
 
-### End Expected DFs
+### End files for analysis
 
 
 week1_path = "tests/mock_data_v2020_09/weekly_multi/weekly_demo1.csv.gz"

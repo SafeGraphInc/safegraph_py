@@ -4,10 +4,9 @@ import pytest
 import pandas as pd
 import pandas.util.testing as pdt
 import json
-import gzip
 
 
-### Expected DFs
+### Files for analysis
 
 core_unzip_1 = "tests/mock_data_v2020_09/core_unzipped/core_poi-part1.csv.gz"
 
@@ -18,7 +17,7 @@ core_folder_unzipped = "tests/mock_data_v2020_09/core_unzipped/"
 core_zipped = "tests/mock_data_v2020_09/Core_from_unzipped.zip"
 
 
-### End Expected DFs
+### End files for analysis
 
 gen_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
 
