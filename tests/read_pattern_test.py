@@ -51,8 +51,8 @@ def test_read_pattern_multi():
 
     action1 = read_pattern_multi(file_path_multi)
 
-    expected1 = pd.concat([week1, week2], ignore_index=True)
-    
+    expected1 = pd.concat([week1, week2])
+
     pdt.assert_frame_equal(action1, expected1)
 
 ### |-------------- Only uncomment when you need to test pytest FAIL functionality -------------|
