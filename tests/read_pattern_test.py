@@ -32,7 +32,7 @@ def test_read_pattern_single():
     
     action = read_pattern_single(f_path=file_path)
 
-    expected = pd.read_csv(file_path, compression='gzip')
+    expected = pd.read_csv(file_path, dtype={'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}, compression='gzip')
 
     pdt.assert_frame_equal(action, expected)
 
