@@ -23,8 +23,8 @@ core_zipped = "tests/mock_data_v2020_09/Core_from_unzipped.zip"
 gen_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
 
 
-df1 = pd.read_csv(core_unzip_1, dtype=gen_dtypes)
-df2 = pd.read_csv(core_unzip_2, dtype=gen_dtypes)
+df1 = pd.read_csv(core_unzip_1, dtype=gen_dtypes, compression='gzip')
+df2 = pd.read_csv(core_unzip_2, dtype=gen_dtypes, compression='gzip')
 
 
 ### Test section
