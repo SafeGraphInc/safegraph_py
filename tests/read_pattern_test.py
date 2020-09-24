@@ -30,9 +30,7 @@ def test_read_pattern_single():
 
     ''' This is a test of read pattern single'''
     
-    # action = read_pattern_single(f_path=file_path)
-
-    action = pd.read_csv(file_path, compression='gzip')
+    action = read_pattern_single(f_path=file_path)
 
     expected = pd.read_csv(file_path, compression='gzip')
 
