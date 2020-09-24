@@ -45,7 +45,7 @@ def test_read_core_folder():
     
     action = read_core_folder(core_folder_unzipped)
 
-    expected = pd.concat([df1, df2])
+    expected = pd.concat([df1, df2], axis=0)
 
     pdt.assert_frame_equal(action, expected)
 
@@ -54,7 +54,7 @@ def test_read_core_folder_zip():
 
     action1 = read_core_folder_zip(core_zipped)
 
-    expected1 = pd.concat([df1, df2])
+    expected1 = pd.concat([df1, df2], axis=0, ignore_index=True)
 
     pdt.assert_frame_equal(action1, expected1)
 
