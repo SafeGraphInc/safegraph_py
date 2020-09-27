@@ -8,9 +8,9 @@ import json
 
 ### Files for analysis
 
-core_unzip_1 = "tests/mock_data_v2020_09/core_unzipped/core_poi-part1.csv.gz"
+input_core_unzip_part1 = "tests/mock_data_v2020_09/core_unzipped/core_poi-part1.csv.gz"
 
-core_unzip_2 = "tests/mock_data_v2020_09/core_unzipped/core_poi-part2.csv.gz"
+input_core_unzip_part2 = "tests/mock_data_v2020_09/core_unzipped/core_poi-part2.csv.gz"
 
 core_folder_unzipped = "tests/mock_data_v2020_09/core_unzipped/"
 
@@ -19,24 +19,14 @@ core_zipped = "tests/mock_data_v2020_09/Core_from_unzipped.zip"
 
 ### End files for analysis
 
-gen_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
+sg_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
 
 
-df1 = pd.read_csv(core_unzip_1, dtype=gen_dtypes, compression='gzip')
-df2 = pd.read_csv(core_unzip_2, dtype=gen_dtypes, compression='gzip')
+df1 = pd.read_csv(input_core_unzip_part1, dtype=sg_dtypes, compression='gzip')
+df2 = pd.read_csv(input_core_unzip_part2, dtype=sg_dtypes, compression='gzip')
 
 
 ### Test section
-
-def add(a, b):
-    return a + b
-
-hold1 = 5
-hold2 = 5
-
-def always_pass_test():
-    value = add(hold1, hold2)
-    assert value == 10
 
 def test_read_core_folder():
 
@@ -56,13 +46,3 @@ def test_read_core_folder_zip():
     expected1 = pd.concat([df1, df2], axis=0, ignore_index=True)
 
     pdt.assert_frame_equal(action1, expected1)
-
-### |-------------- Only uncomment when you need to test pytest FAIL functionality -------------|
-
-# def test_fail():
-
-#     test_df = sgpy.unpack_json(df)
-
-#     df_array_standard = explode_json_array(df)
-
-#     pdt.assert_frame_equal(test_df, df_array_standard)
