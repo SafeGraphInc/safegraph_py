@@ -1,9 +1,7 @@
 # content of read_core_test.py
-from safegraph_py_functions.safegraph_py_functions import read_core_folder, read_core_folder_zip
+from safegraph_py_functions.safegraph_py_functions import *
 import pytest
-import pandas as pd
 import pandas.util.testing as pdt
-import json
 
 
 ### Files for analysis

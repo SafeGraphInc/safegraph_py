@@ -1,10 +1,7 @@
 # content of read_pattern_test.py
-from safegraph_py_functions.safegraph_py_functions import read_pattern_single, read_pattern_multi
+from safegraph_py_functions.safegraph_py_functions import *
 import pytest
-import pandas as pd
 import pandas.util.testing as pdt
-import json
-import gzip
 
 ### Files for analysis
 
