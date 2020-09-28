@@ -19,7 +19,6 @@ core_zipped = "tests/mock_data_v2020_09/Core_from_unzipped.zip"
 
 sg_dtypes = {'postal_code': str, 'phone_number': str, 'naics_code': str, 'latitude': float, 'longitude': float, 'poi_cbg': str, 'census_block_group': str,'primary_number': str}
 
-
 df1 = pd.read_csv(input_core_unzip_part1, dtype=sg_dtypes, compression='gzip')
 df2 = pd.read_csv(input_core_unzip_part2, dtype=sg_dtypes, compression='gzip')
 

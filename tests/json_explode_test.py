@@ -20,10 +20,7 @@ test_input_data = {'safegraph_place_id':  ['sg:64d0ee4695af4ab4906fe82997ead9ff'
         'date_range_start': ['2020-06-22T00:00:00-05:00', '2020-06-22T00:00:00-05:00', '2020-06-22T00:00:00-05:00', '2020-06-22T00:00:00-04:00', '2020-06-22T00:00:00-07:00']
         }
 
-df = pd.DataFrame (test_input_data, columns = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start'])
-
-
-cols = ['safegraph_place_id', 'visits_by_day', 'visitor_home_cbgs', 'date_range_start', 'visitor_home_cbgs_key', 'visitor_home_cbgs_value']
+df = pd.DataFrame (test_input_data)
 
 new_index = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4]
 
