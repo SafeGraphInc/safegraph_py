@@ -31,7 +31,7 @@ def test_read_core_folder():
     
     action = read_core_folder(core_folder_unzipped)
 
-    expected = pd.concat([df2, df1], axis=0)
+    expected = pd.concat([df1, df2], axis=0)
 
     pdt.assert_frame_equal(action, expected)
 
