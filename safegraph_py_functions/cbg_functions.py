@@ -44,20 +44,6 @@ def get_cbg_field_descriptions(year=2019):
   final_table = pd_read_csv_drive(get_drive_id(str(year)), drive)
   return(final_table.dropna(axis=1, how='all'))
 
-def get_drive_id(year): #function to pull input files from Google Drive
-      drive_ids_1 = {
-    '2016': file_list_2016,
-    '2017': file_list_2017,
-    '2018': file_list_2018,
-    '2019': file_list_2019
-} 
-      return(drive_ids_1[year])
-
-def pd_read_csv_drive(id, drive, dtype=None): #function to pull input files from Google Drive into pandas dataframes
-    downloaded = drive.CreateFile({'id':id})
-    downloaded.GetContentFile('Filename.csv')  
-    return(pd.read_csv('Filename.csv',dtype=dtype))
-
 def get_census_columns(columns, year):
     auth.authenticate_user()  # Authenticate and create the PyDrive client. 
     gauth = GoogleAuth()
@@ -78,7 +64,7 @@ def get_census_columns(columns, year):
         '2018': file_list_2018,
         '2019': file_list_2019
     } 
-          return(drive_ids_1[year])
+        return(drive_ids_1[year])
 
     def pd_read_csv_drive(id, drive, dtype=None): #function to pull input files from Google Drive into pandas dataframes
         downloaded = drive.CreateFile({'id':id})
