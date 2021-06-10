@@ -44,22 +44,6 @@ def get_cbg_field_descriptions(year=2019):
   final_table = pd_read_csv_drive(get_drive_id(str(year)), drive)
   return(final_table.dropna(axis=1, how='all'))
 
-
-
-
-
-auth.authenticate_user()  # Authenticate and create the PyDrive client. 
-  gauth = GoogleAuth()
-  gauth.credentials = GoogleCredentials.get_application_default()
-  drive = GoogleDrive(gauth)
-
-  file_list_2016 = dict([(i['title'], i['id']) for i in drive.ListFile({'q': "'17TexQTOM0RmpbekqNBvsiKs_jPH8ynQR' in parents"}).GetList() if i['title'].startswith('cbg')])
-  if 'cbg_patterns.csv' in file_list_2016:
-    del file_list_2016['cbg_patterns.csv']
-  file_list_2017 = dict([(i['title'], i['id']) for i in drive.ListFile({'q': "'1jVF5Z5gf84AL09pGq_4nKAsfIM-lVrqi' in parents"}).GetList()])
-  file_list_2018 = dict([(i['title'], i['id']) for i in drive.ListFile({'q': "'1g5uFI6ZfV2lPieZF63b4VYhqNiwe7dLC' in parents"}).GetList()])
-  file_list_2019 = dict([(i['title'], i['id']) for i in drive.ListFile({'q': "'1LJFuG74zoy1FpMg3tcJ_UBCCA4OwGcpU' in parents"}).GetList()])
- 
 def get_drive_id(year): #function to pull input files from Google Drive
       drive_ids_1 = {
     '2016': file_list_2016,
@@ -73,10 +57,6 @@ def pd_read_csv_drive(id, drive, dtype=None): #function to pull input files from
     downloaded = drive.CreateFile({'id':id})
     downloaded.GetContentFile('Filename.csv')  
     return(pd.read_csv('Filename.csv',dtype=dtype))
-
-columns_1 = ['B00001e1', 'C24030e48', 'C24030e49', 'C24030m49']
-#use the numbers in the csv name to narrow it down manually
-#def get_census_columns(columns, year)
 
 def get_census_columns(columns, year):
     auth.authenticate_user()  # Authenticate and create the PyDrive client. 
@@ -120,12 +100,5 @@ def get_census_columns(columns, year):
     df.columns = df.columns.map('{0[1]}{0[0]}'.format)
     df.reset_index(inplace = True)
     return df
-
-#pd_read_csv_drive(get_drive_id('2016')['cbg_b00.csv'], drive)[get_census_columns(columns_1, '2016')['cbg_b00.csv']]
-test = get_census_columns(columns_1, '2016')
-#test it for every column and year
-#get in touch with Eugene Chong
-#fix the string/number issue with CBGs
-
 
 
