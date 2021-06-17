@@ -70,29 +70,27 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
             year*
   ''')
 
-
-
 def get_drive_id(year, drive_ids): #function to pull input files from Google Drive
     return(drive_ids[str(year)])
 
-def pd_read_csv_drive(id, drive, dtype=None): #function to pull input files from Google Drive into pandas dataframes
+def pd_read_csv_drive(id, drive, dtype = None): #function to pull input files from Google Drive into pandas dataframes
     downloaded = drive.CreateFile({'id':id})
     downloaded.GetContentFile('Filename.csv')  
     return(pd.read_csv('Filename.csv',dtype=dtype))
 
 def get_cbg_field_descriptions(year=2019):
+  year = str(year)
+  auth.authenticate_user()  # Authenticate and create the PyDrive client. 
+  gauth = GoogleAuth()
+  gauth.credentials = GoogleCredentials.get_application_default()
+  drive = GoogleDrive(gauth)
 
-    auth.authenticate_user()  # Authenticate and create the PyDrive client. 
-    gauth = GoogleAuth()
-    gauth.credentials = GoogleCredentials.get_application_default()
-    drive = GoogleDrive(gauth)
-
-    final_table = pd_read_csv_drive(get_drive_id(str(year){'2016' : '13dLXo67IZDh3OZl042GQYG16Qn_NB7sz',
+  final_table = pd_read_csv_drive(get_drive_id(year,{'2016' : '13dLXo67IZDh3OZl042GQYG16Qn_NB7sz',
                   '2017' : '1b2RVBDgzdrDJkL0OCYRMGBc5zbLhv5MB',
                   '2018' : '1r7z3efdS5viIRMsQzu9ExHoIL29QjaVi',
                   '2019' : '1fJsLm6voxWsTq5FQrUzO9PpBltQ8n_lJ'
                   }), drive)
-    return(final_table)
+  return(final_table)
 
 def get_census_columns(columns, year):
     auth.authenticate_user()  # Authenticate and create the PyDrive client. 
@@ -133,5 +131,3 @@ def get_census_columns(columns, year):
     df.reset_index(inplace = True)
     df['census_block_group'] = [i.zfill(12)for i in df['census_block_group'].astype(str)]
     return df
-
-
