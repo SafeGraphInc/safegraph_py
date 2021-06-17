@@ -12,6 +12,8 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install `safegr
 pip install -q --upgrade git+https://github.com/SafeGraphInc/safegraph_py
 ```
 
+## Safegraph_py
+
 ## Usage
 
 ```python
@@ -85,6 +87,37 @@ The merge_core_pattern function is designed to take a patterns DF and cross exam
 
 The merge_socialDist_by_dates function is designed to merge the social distancing data from a given start_date to a given end_date. The resulting pandas DF will be a DF of all social distancing data from the start_date to the end_date. All Pandas arguments and keywords arguments can be passed into this function.
 * start_date and end_date are strings formated as: "year-month-day"
+
+## cbg_functions
+
+## Usage
+
+```python
+from safegraph_py_functions import cbg_functions as sgpy
+
+sgpy.test_me_cbg() # returns 'Hello World' to ensure you have downloaded the library
+sgpy.help_cbg() # returns a list of all active functions and their arguments in the cbg_functions library
+sgpy.get_cbg_field_descriptions(year) - This function creates a reference table of Census data columns and their definitions
+# etc. . . 
+```
+
+## Functions
+
+#### get_drive_id(year, drive_ids)
+
+This function is used to pull input files from Google Drive. It requires input of a year (of 2016, 2017, 2018, or 2019) and a dictionary of Google Drive IDs with the requisite respective data. This function is used automatically within other functions, so knowledge of said dictionary is not necessary.
+
+#### pd_read_csv_drive(id, drive, dtype = None)
+
+This function is used to pull input files from Google Drive into Pandas DataFrames. This function takes the output of the chosen year from the previous function, get_drive_id, as its first required input. The second required input is a Google Drive object, automatically created within the functions that use these functions.
+
+#### get_cbg_field_descriptions(year=2019)
+
+This function authenticates and creates a PyDrive client, and creates a Pandas DataFrame (via the previous two functions) providing descriptions of each Census column for user reference. Information is available for 2016 to 2019.
+
+#### get_census_columns(columns, year)
+
+This function authenticates and creates a PyDrive client, and creates a Pandas DataFrame (via the first two functions) providing Census data for every census block group present in the data for the selected columns in the selected year (years available are 2016-2019). The input columns must be in a list and match the names given in the reference table in the above function.
 
 ## Contributing
 Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.
