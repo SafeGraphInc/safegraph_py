@@ -10,13 +10,13 @@ from multiprocessing import Pool
 
 ### -------------------------------------Test and Help function -------------------------------------------------------
 
-def test_me():
+def test_me_sgpy():
     print("Hello World")
 
-def version():
+def version_sgpy():
     print("safegraph_py v1.1.0")
     
-def help():
+def help_sgpy():
     print('''
 
  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
@@ -47,7 +47,7 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
   Available Functions: 
 
-    + test_me() - A function to test the Python Libray
+    + test_me_sgpy() - A function to test the Python Libray
 
   ----------------------[JSON Section]----------------------
 

@@ -47,19 +47,6 @@ Y88b  d88P 888  888 888   Y8b.     Y88b  d88P 888    888  888 888 d88P 888  888 
 
   Available Functions: 
 
-    + test_me_sbg() - A function to test the Python library script...a proper result should be the printing of "Hello World".
-
-    + get_drive_id() - A function to pull input files from Google Drive. It requires a year and a dictionary of Google Drive IDs with the requisite respective data. This function is used automatically within other functions, so possession of said dictionary is not necessary.
-        **Arguments: 
-            year*
-            drive_ids*
-
-    + pd_read_csv_drive() - A function to pull input files from Google Drive into pandas dataframes. This function takes the output of the chosen year from the previous function, get_drive_id, as its first input. The second input is a Google Drive object, automatically created within the functions that use these functions.
-        **Arguments:
-            id*
-            drive*
-            dtype
-
     + get_cbg_field_descriptions() - This function authenticates and creates a PyDrive client, and creates a Pandas DataFrame (via the previous two functions) providing descriptions of each Census column for user reference. There is one present for years 2016-2019, and the default is 2019.
         **Arguments:
             year*
