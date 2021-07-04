@@ -12,7 +12,10 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install `safegr
 pip install -q --upgrade git+https://github.com/SafeGraphInc/safegraph_py
 ```
 
-## Safegraph_py
+## Sections
+This package is divided into two sections...the first is safegraph_py_functions (shortened to sgpy), which is for working with the JSONs and zipped files of the SafeGraph patterns data. The other is cbg_functions (shortened to cbg), which is for accessing SafeGraph's archives of the 2016-2019 ACS census block group data from the US Census.
+
+## Safegraph_py_functions
 
 ## Usage
 
@@ -93,7 +96,7 @@ The merge_socialDist_by_dates function is designed to merge the social distancin
 ## Usage
 
 ```python
-from safegraph_py_functions import cbg_functions as sgpy
+from safegraph_py_functions import cbg_functions as cbg
 
 sgpy.test_me_cbg() # returns 'Hello World' to ensure you have downloaded the library
 sgpy.help_cbg() # returns a list of all active functions and their arguments in the cbg_functions library
@@ -103,21 +106,35 @@ sgpy.get_cbg_field_descriptions(year) - This function creates a reference table 
 
 ## Functions
 
-#### get_drive_id(year, drive_ids)
-
-This function is used to pull input files from Google Drive. It requires input of a year (of 2016, 2017, 2018, or 2019) and a dictionary of Google Drive IDs with the requisite respective data. This function is used automatically within other functions, so knowledge of said dictionary is not necessary.
-
-#### pd_read_csv_drive(id, drive, dtype = None)
-
-This function is used to pull input files from Google Drive into Pandas DataFrames. This function takes the output of the chosen year from the previous function, get_drive_id, as its first required input. The second required input is a Google Drive object, automatically created within the functions that use these functions.
-
 #### get_cbg_field_descriptions(year=2019)
 
 This function authenticates and creates a PyDrive client, and creates a Pandas DataFrame (via the previous two functions) providing descriptions of each Census column for user reference. Information is available for 2016 to 2019.
 
+Example of 2019 output: 
+get_cbg_field_descriptions()
+
+(There are ten field levels, but for space, only up to seven are shown.)
+
+table_id	table_number	table_title	table_topics	table_universe	field_level_1	field_level_2	field_level_3	field_level_4	field_level_5	field_level_6	field_level_7
+B01001e1	B01001	        Sex By Age	Age and Sex	    Total population	Estimate	SEX BY AGE	    Total population	Total	         NaN	    NaN	            NaN	
+B01001e10	B01001	        Sex By Age	Age and Sex	    Total population	Estimate	SEX BY AGE	    Total population	Total	         Male	    22 to 24 years	NaN
+B01001e11	B01001	        Sex By Age	Age and Sex	    Total population	Estimate	SEX BY AGE	    Total population	Total	         Male	    25 to 29 years	NaN
+B01001e12	B01001	        Sex By Age	Age and Sex	    Total population	Estimate	SEX BY AGE	    Total population	Total	         Male	    30 to 34 years	NaN
+B01001e13	B01001	        Sex By Age	Age and Sex	    Total population	Estimate	SEX BY AGE	    Total population	Total	         Male	    35 to 39 years	NaN
+
 #### get_census_columns(columns, year)
 
 This function authenticates and creates a PyDrive client, and creates a Pandas DataFrame (via the first two functions) providing Census data for every census block group present in the data for the selected columns in the selected year (years available are 2016-2019). The input columns must be in a list and match the names given in the reference table in the above function.
+
+Example output:
+get_census_columns(['B01001e1', 'B01001e10', 'B01001e11', 'B01001e12'], 2019):
+
+census_block_group	B01001e1	B01001e10	B01001e11	B01001e12
+010010201001		730			30			9			30
+010010201002		1263		34			22			42
+010010202001		835			3			12			17
+010010202002		1124		42			87			80
+010010203001		2774		51			144			143
 
 ## Contributing
 Pull requests are welcome. For major changes, please [open an issue](https://github.com/SafeGraphInc/safegraph_py/issues/new) first to discuss what you would like to change.
