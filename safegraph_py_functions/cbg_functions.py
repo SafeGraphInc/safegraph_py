@@ -12,13 +12,13 @@ from pydrive.drive import GoogleDrive
 from google.colab import auth
 from oauth2client.client import GoogleCredentials
 
-def test_me_sbg():
+def test_me_cbg():
     print("Hello World")
 
-def version_sbg():
+def version_cbg():
     print("safegraph_py v1.1.1")
     
-def help_sbg():
+def help_cbg():
     print('''
 
  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
