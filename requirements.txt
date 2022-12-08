@@ -1,2 +1,2 @@
-certifi==2020.6.20
+certifi==2022.12.7
 pandas==1.1.2
