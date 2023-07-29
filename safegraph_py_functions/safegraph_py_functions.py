@@ -313,21 +313,45 @@ def merge_core_pattern(core_df, patterns_df, how='inner', *args, **kwargs):
 ## start_date and end_date = string formated as "year-month-day" 
     ## ex: start_date = "2020-06-01", end_date = "2020-06-07"
 
-def merge_socialDist_by_dates(path_to_social_dist,start_date,end_date, *args, **kwargs):
-    path = os.path.join(path_to_social_dist,start_date[:4])
-    if(start_date[5:7] == end_date[5:7]): # same month
-        path = os.path.join(path,end_date[5:7])
+def merge_socialDist_by_dates(path_to_social_dist, start_date, end_date, *args, **kwargs):
+    # Validate input dates
+    try:
+        pd.to_datetime(start_date, format='%Y-%m-%d')
+        pd.to_datetime(end_date, format='%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Invalid date format. Dates should be in the format 'YYYY-MM-DD'.")
+
+    # Check if the directory exists and is accessible
+    if not os.path.exists(path_to_social_dist) or not os.path.isdir(path_to_social_dist):
+        raise FileNotFoundError("The specified directory does not exist or is not accessible.")
+
+    path = os.path.join(path_to_social_dist, start_date[:4])
+
+    # Check if start_date is earlier than end_date
+    if start_date > end_date:
+        raise ValueError("start_date should be earlier than or equal to end_date.")
+
+    if start_date[5:7] == end_date[5:7]:  # same month
+        path = os.path.join(path, end_date[5:7])
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:int(end_date[-2:])]
     else:
-        path2 = os.path.join(path, end_date[5:7]) # not same month, so different folder
+        path2 = os.path.join(path, end_date[5:7])  # not same month, so different folder
         path = os.path.join(path, start_date[5:7])
-        last_day = int(sorted(os.listdir(path))[-1]) # last day of month    
+        last_day = int(sorted(os.listdir(path))[-1])  # last day of month
         files = [file.path for day in os.scandir(path) for file in os.scandir(day.path)][int(start_date[-2:])-1:last_day]
         files.extend([file.path for day in os.scandir(path2) for file in os.scandir(day.path)][:int(end_date[-2:])])
+
     li = []
     for file in files:
-        temp_df = pd.read_csv(file,dtype= {'origin_census_block_group':str}, *args, **kwargs)
-        li.append(temp_df)
-    return pd.concat(li, axis=0,ignore_index=True)
+        try:
+            temp_df = pd.read_csv(file, dtype={'origin_census_block_group': str}, *args, **kwargs)
+            li.append(temp_df)
+        except (pd.errors.EmptyDataError, pd.errors.ParserError):
+            print(f"Warning: Empty or invalid CSV file found: {file}")
+
+    if not li:
+        raise ValueError("No valid data found within the specified date range.")
+
+    return pd.concat(li, axis=0, ignore_index=True)
 
 ### --------------------------------------- END SOCIAL DISTANCING SECTION -----------------------------------------------
